@@ -27,7 +27,6 @@ interface OSRMStep {
 
 // --- MAIN CLIENT PAGE COMPONENT ---
 export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
-    const mapRef = useRef<L.Map | null>(null);
     const [route, setRoute] = useState<GeoJsonObject | null>(null);
     const [userLocation, setUserLocation] = useState<LatLngExpression | null>(null);
     const [statusMessage, setStatusMessage] = useState('');
@@ -101,12 +100,10 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
     // MapController must only be defined on client
     // MapController must be a standard React component (not conditional)
     function MapController({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) {
-        // Only render if dependencies are loaded
-        if (!leaflet || !MapComponents) return null;
         const { useMap } = require('react-leaflet');
         const map = useMap();
         useEffect(() => {
-            if (!map) return;
+            if (!map || !leaflet) return;
             if (route && userLocation) {
                 const geoJsonLayer = leaflet.geoJSON(route);
                 const bounds = geoJsonLayer.getBounds().extend(userLocation as L.LatLngTuple);
@@ -114,7 +111,8 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
             } else {
                 map.setView(trailCoords, 14);
             }
-        }, [route, userLocation, map, trailCoords]);
+        }, [route, userLocation, map, trailCoords, leaflet]);
+        if (!leaflet || !MapComponents) return null;
         return null;
     }
 
@@ -122,41 +120,14 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
 
     // ...existing code...
 
-    const findUserLocation = useCallback(() => {
-        return new Promise<L.LatLng>((resolve, reject) => {
-            if (mapRef.current && leaflet) {
-                mapRef.current.locate().on('locationfound', (e: { latlng: L.LatLng }) => {
-                    setUserLocation(e.latlng);
-                    resolve(e.latlng);
-                }).on('locationerror', (e: { message: string }) => {
-                    reject(e.message);
-                });
-            } else {
-                reject('Map not initialized');
-            }
-        });
-    }, [leaflet]);
+    // Remove findUserLocation and use a controller component instead
 
-    const handleGetDirections = async () => {
+    // State to trigger user location finding
+    const [findLocationFor, setFindLocationFor] = useState<'directions' | 'itinerary' | null>(null);
+
+    const handleGetDirections = () => {
         setStatusMessage('Getting your location...');
-        try {
-            const userLatLng = await findUserLocation();
-            setStatusMessage('Calculating route...');
-            const destCoords = trail.coords;
-            const url = `https://router.project-osrm.org/route/v1/driving/${userLatLng.lng},${userLatLng.lat};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`;
-
-            const response = await fetch(url);
-            const data = await response.json();
-            if (data.routes && data.routes.length > 0) {
-                setRoute(data.routes[0].geometry);
-                setStatusMessage('Route shown on map!');
-            } else {
-                setStatusMessage('No route found.');
-            }
-        } catch (error) {
-            setStatusMessage(typeof error === 'string' ? error : 'Could not get directions.');
-            console.error(error);
-        }
+        setFindLocationFor('directions');
     };
 
     const isSignificantManeuver = (step: OSRMStep, index: number, steps: OSRMStep[]) => {
@@ -195,33 +166,66 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         return 'fa-shoe-prints';
     };
 
-    const handleDynamicItinerary = async () => {
+    const handleDynamicItinerary = () => {
         setDynamicItineraryStatus('Getting your location...');
-        try {
-            const userLatLng = await findUserLocation();
-            setDynamicItineraryStatus('Fetching simplified directions...');
-            const destCoords = trail.coords;
-            const url = `https://router.project-osrm.org/route/v1/driving/${userLatLng.lng},${userLatLng.lat};${destCoords[1]},${destCoords[0]}?steps=true`;
-
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.routes && data.routes[0].legs[0].steps) {
-                const significantSteps = data.routes[0].legs[0].steps.filter(isSignificantManeuver);
-                const drivingSteps = significantSteps.map((step: OSRMStep) => ({ type: 'driving', text: formatManeuver(step) }));
-                const hikingSteps = staticItinerary.slice(1);
-
-                setItinerary([...drivingSteps, ...hikingSteps]);
-                setDynamicItineraryStatus('Minimalist itinerary generated!');
-                setIsItineraryButtonDisabled(true);
-            } else {
-                setDynamicItineraryStatus('Could not fetch driving directions.');
-            }
-        } catch (error) {
-            setDynamicItineraryStatus(typeof error === 'string' ? error : 'Could not update itinerary.');
-            console.error(error);
-        }
+        setFindLocationFor('itinerary');
     };
+
+    // This component will use useMap to find user location and call the appropriate handler
+    function UserLocationController() {
+        const { useMap } = require('react-leaflet');
+        const map = useMap();
+        useEffect(() => {
+            if (!findLocationFor) return;
+            if (!map || !leaflet) return;
+            map.locate().on('locationfound', async (e: { latlng: L.LatLng }) => {
+                setUserLocation(e.latlng);
+                if (findLocationFor === 'directions') {
+                    setStatusMessage('Calculating route...');
+                    const destCoords = trail.coords;
+                    const url = `https://router.project-osrm.org/route/v1/driving/${e.latlng.lng},${e.latlng.lat};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`;
+                    try {
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        if (data.routes && data.routes.length > 0) {
+                            setRoute(data.routes[0].geometry);
+                            setStatusMessage('Route shown on map!');
+                        } else {
+                            setStatusMessage('No route found.');
+                        }
+                    } catch (error) {
+                        setStatusMessage('Could not get directions.');
+                    }
+                } else if (findLocationFor === 'itinerary') {
+                    setDynamicItineraryStatus('Fetching simplified directions...');
+                    const destCoords = trail.coords;
+                    const url = `https://router.project-osrm.org/route/v1/driving/${e.latlng.lng},${e.latlng.lat};${destCoords[1]},${destCoords[0]}?steps=true`;
+                    try {
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        if (data.routes && data.routes[0].legs[0].steps) {
+                            const significantSteps = data.routes[0].legs[0].steps.filter(isSignificantManeuver);
+                            const drivingSteps = significantSteps.map((step: OSRMStep) => ({ type: 'driving', text: formatManeuver(step) }));
+                            const hikingSteps = staticItinerary.slice(1);
+                            setItinerary([...drivingSteps, ...hikingSteps]);
+                            setDynamicItineraryStatus('Minimalist itinerary generated!');
+                            setIsItineraryButtonDisabled(true);
+                        } else {
+                            setDynamicItineraryStatus('Could not fetch driving directions.');
+                        }
+                    } catch (error) {
+                        setDynamicItineraryStatus('Could not update itinerary.');
+                    }
+                }
+                setFindLocationFor(null);
+            }).on('locationerror', (e: { message: string }) => {
+                if (findLocationFor === 'directions') setStatusMessage(e.message);
+                if (findLocationFor === 'itinerary') setDynamicItineraryStatus(e.message);
+                setFindLocationFor(null);
+            });
+        }, [findLocationFor, leaflet]);
+        return null;
+    }
 
     const googleMapsUrl = userLocation
         ? `https://www.google.com/maps/dir/?api=1&origin=${(userLocation as L.LatLng).lat},${(userLocation as L.LatLng).lng}&destination=${trail.coords[0]},${trail.coords[1]}`
@@ -265,18 +269,13 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
                 <div className="mb-12">
                     <div className="relative z-0 rounded-lg h-80 md:h-[400px] mb-4 border border-gray-300">
                         {isClient && MapContainer && TileLayer && Marker && Popup && GeoJSON && icons && (
-                            <MapContainer center={trail.coords} zoom={14} style={{ height: '100%', width: '100%' }} whenReady={() => {
-                                if (mapRef.current == null && leaflet) {
-                                    // Use leaflet's map instance from the DOM
-                                    const mapInstance = leaflet.map(document.querySelector('.leaflet-container') as HTMLElement);
-                                    mapRef.current = mapInstance;
-                                }
-                            }}>
+                            <MapContainer center={trail.coords} zoom={14} style={{ height: '100%', width: '100%' }}>
                                 <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                                 />
                                 <MapController route={route} userLocation={userLocation} trailCoords={trail.coords} />
+                                <UserLocationController />
                                 <Marker position={trail.coords} icon={icons.trailIcon}>
                                     <Popup>
                                         <b>{trail.name}</b>
