@@ -1,31 +1,33 @@
 // app/(main)/directory/page.tsx
+"use client";
+
+import { useEffect, useState } from 'react';
 import BusinessCard from '@/app/components/BusinessCard';
+import SkeletonCard from '@/app/components/SkeletonCard';
 import { businesses, type Business } from '@/app/data/businesses';
 
-// Define the specific colors our BusinessCard component accepts
 type CardColor = 'green' | 'red' | 'blue' | 'gray' | 'orange' | 'yellow';
 
-/**
- * Safely maps the color string from the data file to the specific
- * color type required by the BusinessCard component.
- * @param color The color string from the business data.
- * @returns A valid CardColor or 'gray' as a default.
- */
 function mapColor(color: string): CardColor {
   const validColors: CardColor[] = ['green', 'red', 'blue', 'gray', 'orange', 'yellow'];
-  // Handle 'grey' from data and map it to 'gray' for the component
-  if (color === 'grey') {
-    return 'gray';
-  }
-  // Check if the color is one of the valid options
+  if (color === 'grey') return 'gray';
   if (validColors.includes(color as CardColor)) {
     return color as CardColor;
   }
-  // Return a default color if no match is found
   return 'gray';
 }
 
 export default function DirectoryPage() {
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Simulate a network request
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500); // Adjust delay as needed
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div className="text-center mb-12">
@@ -34,17 +36,21 @@ export default function DirectoryPage() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {businesses.map((business: Business) => (
-          <BusinessCard 
-            key={business.slug}
-            name={business.name}
-            description={business.description}
-            category={business.category}
-            imageUrl={business.imageUrl}
-            color={mapColor(business.color)}
-            href={`/directory/${business.slug}`}
-          />
-        ))}
+        {loading ? (
+          Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />)
+        ) : (
+          businesses.map((business: Business) => (
+            <BusinessCard 
+              key={business.slug}
+              name={business.name}
+              description={business.description}
+              category={business.category}
+              imageUrl={business.imageUrl}
+              color={mapColor(business.color)}
+              href={`/directory/${business.slug}`}
+            />
+          ))
+        )}
       </div>
     </div>
   );

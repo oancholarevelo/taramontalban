@@ -13,7 +13,7 @@ interface Props {
 
 export default function ArticleCard({ title, excerpt, author, date, imageUrl, slug }: Props) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:glow">
       <Link href={`/articles/${slug}`}>
         <Image src={imageUrl} alt={`Image for article: ${title}`} width={600} height={400} className="w-full h-56 object-cover" />
       </Link>

@@ -9,32 +9,32 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Navigate</h3>
             <ul className="mt-4 space-y-2">
-              <li><Link href="/" className="text-base text-gray-600 hover:text-green-600">Home</Link></li>
-              <li><Link href="/directory" className="text-base text-gray-600 hover:text-green-600">Directory</Link></li>
-              <li><Link href="/trails" className="text-base text-gray-600 hover:text-green-600">Trails</Link></li>
+              <li><Link href="/" className="text-base text-gray-600 hover:text-green-600 transition-colors">Home</Link></li>
+              <li><Link href="/directory" className="text-base text-gray-600 hover:text-green-600 transition-colors">Directory</Link></li>
+              <li><Link href="/trails" className="text-base text-gray-600 hover:text-green-600 transition-colors">Trails</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Community</h3>
             <ul className="mt-4 space-y-2">
-              <li><Link href="/events" className="text-base text-gray-600 hover:text-green-600">Events</Link></li>
-              <li><Link href="/articles" className="text-base text-gray-600 hover:text-green-600">Articles</Link></li>
-              <li><a href="#" className="text-base text-gray-600 hover:text-green-600">Submit a Business</a></li>
+              <li><Link href="/events" className="text-base text-gray-600 hover:text-green-600 transition-colors">Events</Link></li>
+              <li><Link href="/articles" className="text-base text-gray-600 hover:text-green-600 transition-colors">Articles</Link></li>
+              <li><a href="#" className="text-base text-gray-600 hover:text-green-600 transition-colors">Submit a Business</a></li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">About</h3>
             <ul className="mt-4 space-y-2">
-              <li><a href="#" className="text-base text-gray-600 hover:text-green-600">Our Mission</a></li>
-              <li><a href="#" className="text-base text-gray-600 hover:text-green-600">Contact Us</a></li>
+              <li><a href="#" className="text-base text-gray-600 hover:text-green-600 transition-colors">Our Mission</a></li>
+              <li><a href="#" className="text-base text-gray-600 hover:text-green-600 transition-colors">Contact Us</a></li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Connect</h3>
             <div className="flex mt-4 space-x-4">
-              <a href="#" className="text-gray-500 hover:text-green-600"><i className="fab fa-facebook-f"></i></a>
-              <a href="#" className="text-gray-500 hover:text-green-600"><i className="fab fa-instagram"></i></a>
-              <a href="#" className="text-gray-500 hover:text-green-600"><i className="fab fa-twitter"></i></a>
+              <a href="#" className="text-gray-500 hover:text-green-600 transition-transform hover:scale-110"><i className="fab fa-facebook-f"></i></a>
+              <a href="#" className="text-gray-500 hover:text-green-600 transition-transform hover:scale-110"><i className="fab fa-instagram"></i></a>
+              <a href="#" className="text-gray-500 hover:text-green-600 transition-transform hover:scale-110"><i className="fab fa-twitter"></i></a>
             </div>
           </div>
         </div>

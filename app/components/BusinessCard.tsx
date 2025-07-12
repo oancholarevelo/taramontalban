@@ -39,7 +39,7 @@ export default function BusinessCard({ name, description, category, imageUrl, co
   if (href) {
     return (
       <Link href={href} className="block group focus:outline-none focus:ring-2 focus:ring-green-500 rounded-lg">
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 group-hover:glow">
           <CardContent />
         </div>
       </Link>

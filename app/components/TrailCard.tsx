@@ -24,7 +24,7 @@ export default function TrailCard({ name, difficulty, masl, description, imageUr
   const shortDescription = description.split('. ')[0] + '.';
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 flex flex-col md:flex-row overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-gray-300">
+    <div className="bg-white rounded-lg border border-gray-200 flex flex-col md:flex-row overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-gray-300 hover:glow">
       <div className={clsx("w-full md:w-1/2 flex-shrink-0", layout === 'right' && 'md:order-last')}>
          <Image src={imageUrl} alt={`View from ${name}`} width={600} height={400} className="w-full h-64 md:h-auto object-cover"/>
       </div>
