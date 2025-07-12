@@ -12,11 +12,11 @@ export async function generateStaticParams() {
 }
 
 type PageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export default async function ArticlePage({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug } = await params; // Await the params Promise
   const article = allArticles.find(a => a.slug === slug);
 
   if (!article) {
