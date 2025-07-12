@@ -1,6 +1,5 @@
 // app/(main)/contribute/page.tsx
 import type { Metadata } from 'next';
-import Link from 'next/link';
 
 // SEO Metadata for the new page
 export const metadata: Metadata = {
@@ -32,7 +31,7 @@ export default function ContributePage() {
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Submit a Business or Tourist Spot</h2>
               <p className="mt-2 text-lg text-gray-600">
-                Know a great local resort, restaurant, or hidden gem that's not on our list? We'd love to hear about it. Your submission helps tourists and locals alike discover the best of Rodriguez.
+                Know a great local resort, restaurant, or hidden gem that&apos;s not on our list? We&apos;d love to hear about it. Your submission helps tourists and locals alike discover the best of Rodriguez.
               </p>
             </div>
           </div>
@@ -47,7 +46,7 @@ export default function ContributePage() {
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Write for Us</h2>
               <p className="mt-2 text-lg text-gray-600">
-                Are you a writer, photographer, or local expert? Share your stories, hiking experiences, or guides with our audience. We're always looking for fresh perspectives on the adventures Montalban has to offer.
+                Are you a writer, photographer, or local expert? Share your stories, hiking experiences, or guides with our audience. We&apos;re always looking for fresh perspectives on the adventures Montalban has to offer.
               </p>
             </div>
           </div>
@@ -72,11 +71,11 @@ export default function ContributePage() {
         <div className="mt-20 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">Ready to Get Started?</h2>
             <p className="mt-3 text-lg text-gray-600">
-                Send us an email with your contribution idea, and we'll get back to you shortly.
+                Send us an email with your contribution idea, and we&apos;ll get back to you shortly.
             </p>
             <div className="mt-8">
                 <a 
-                    href="mailto:oancholarevelo@gmail.com?subject=Contribution Inquiry"
+                    href="mailto:contact@rodriguezguide.com?subject=Contribution Inquiry"
                     className="inline-block bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-green-700 transition-transform duration-300 transform hover:scale-105"
                 >
                     Email Us

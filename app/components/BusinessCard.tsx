@@ -1,7 +1,6 @@
 // app/components/BusinessCard.tsx
 import Link from 'next/link';
 import Image from 'next/image';
-import clsx from 'clsx';
 
 interface BusinessCardProps {
   name: string;
@@ -12,7 +11,6 @@ interface BusinessCardProps {
   href?: string;
 }
 
-// Using a consistent green tag for brand unity
 const categoryTagStyle = "inline-block text-xs font-semibold mr-auto px-2.5 py-0.5 rounded-full mb-2 bg-green-100 text-green-800";
 
 export default function BusinessCard({ name, description, category, imageUrl, href }: BusinessCardProps) {
