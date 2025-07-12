@@ -1,0 +1,82 @@
+// app/components/TrailMap.tsx
+"use client";
+
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import { useEffect, useState } from 'react';
+import { allTrails as trailsData } from '@/app/data/trails';
+import Link from 'next/link';
+
+// Fix for default marker icon issue with webpack
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
+
+
+// Define Trail type based on data structure
+type Trail = {
+  name: string;
+  slug: string;
+  coords: [number, number];
+};
+const allTrails: Trail[] = Object.values(trailsData);
+
+
+export default function TrailMap() {
+    const [route, setRoute] = useState<any>(null);
+
+    const handleGetDirections = (destCoords: [number, number]) => {
+        if (!navigator.geolocation) {
+            alert('Geolocation is not supported by your browser.');
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const userCoords: [number, number] = [position.coords.latitude, position.coords.longitude];
+            const url = `https://router.project-osrm.org/route/v1/driving/${userCoords[1]},${userCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.routes && data.routes.length > 0) {
+                    setRoute(data.routes[0].geometry);
+                } else {
+                    alert('No route found.');
+                }
+            } catch (error) {
+                console.error("Failed to fetch route:", error);
+                alert('Error getting directions.');
+            }
+        }, () => {
+            alert('Could not get your location.');
+        });
+    };
+
+    return (
+        <MapContainer center={[14.76, 121.19]} zoom={12} style={{ height: '100%', width: '100%', zIndex: 10 }}>
+            <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            />
+            {allTrails.map(trail => (
+                <Marker key={trail.slug} position={trail.coords}>
+                    <Popup>
+                        <b>{trail.name}</b><br />
+                        <Link href={`/trails/${trail.slug}`} className="text-green-600 font-bold" style={{ textDecoration: 'underline' }}>View Details</Link><br />
+                        <button
+                            onClick={() => handleGetDirections(trail.coords)}
+                            className="mt-2 p-1 bg-green-600 text-white rounded cursor-pointer"
+                        >
+                            Get Directions
+                        </button>
+                    </Popup>
+                </Marker>
+            ))}
+            {route && <GeoJSON data={route} style={{ color: '#16a34a', weight: 5 }} />}
+        </MapContainer>
+    );
+}
