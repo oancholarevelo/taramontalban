@@ -8,7 +8,14 @@ import { businesses } from '@/app/data/businesses';
 import Link from 'next/link';
 
 // Fix for default marker icon issue
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+interface IconOptions {
+  _getIconUrl?: string;
+  iconRetinaUrl: string;
+  iconUrl: string;
+  shadowUrl: string;
+}
+
+delete ((L.Icon.Default.prototype as unknown) as IconOptions)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',

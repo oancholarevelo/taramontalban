@@ -1,3 +1,4 @@
+// app/(main)/trails/[slug]/page.tsx
 "use client";
 
 import { allTrails } from '@/app/data/trails';
@@ -5,7 +6,7 @@ import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L, { LatLngExpression, Map as LeafletMapInstance } from 'leaflet';
+import L, { LatLngExpression } from 'leaflet';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { GeoJsonObject } from 'geojson';
 
@@ -22,7 +23,15 @@ interface OSRMStep {
 }
 
 // Fix for default marker icon issue
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+interface IconOptions {
+  _getIconUrl?: string;
+  iconRetinaUrl: string;
+  iconUrl: string;
+  shadowUrl: string;
+}
+
+delete ((L.Icon.Default.prototype as unknown) as IconOptions)._getIconUrl;
+
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -244,7 +253,7 @@ export default function TrailDetailPage() {
         </div>
 
         <div className="grid grid-cols-1">
-          <div className="md:col-span-3">
+          <div>
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Trail Overview</h2>
             <p className="text-gray-700 leading-relaxed mb-8">{trail.description}</p>
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Registered Guides</h2>
@@ -259,7 +268,7 @@ export default function TrailDetailPage() {
             </ul>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border md:col-span-3 mt-8">
+          <div className="bg-white p-6 rounded-lg border mt-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Sample Itinerary</h2>
             <div className="timeline">
               {itinerary.map((item, index) => (
