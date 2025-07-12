@@ -2,20 +2,20 @@
 import type { Metadata } from 'next';
 import { allTrails } from '@/app/data/trails';
 import { notFound } from 'next/navigation';
-import TrailSlugClientPage from './TrailSlugClientPage'; // Import the new client component
+import TrailSlugClientPage from './TrailSlugClientPage';
 
 // --- SERVER-SIDE FUNCTIONS ---
 
 // Generate dynamic metadata for SEO
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const slug = params.slug;
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params; // Await params to get slug
   const trail = allTrails[slug];
 
   if (!trail) {
     return {
       title: "Trail Not Found",
       description: "This trail could not be found in our guide to Montalban, Rizal.",
-    }
+    };
   }
 
   return {
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     alternates: {
       canonical: `/trails/${slug}`,
     },
-  }
+  };
 }
 
 // Generate static paths at build time for performance
@@ -35,8 +35,8 @@ export async function generateStaticParams() {
 }
 
 // --- MAIN PAGE COMPONENT (SERVER) ---
-export default function TrailDetailPage({ params }: { params: { slug: string } }) {
-  const slug = params.slug;
+export default async function TrailDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params; // Await params to get slug
   const trail = allTrails[slug];
 
   if (!trail) {
@@ -54,21 +54,21 @@ export default function TrailDetailPage({ params }: { params: { slug: string } }
       '@type': 'PostalAddress',
       addressLocality: 'Rodriguez',
       addressRegion: 'Rizal',
-      addressCountry: 'PH'
+      addressCountry: 'PH',
     },
     geo: {
       '@type': 'GeoCoordinates',
       latitude: trail.coords[0],
-      longitude: trail.coords[1]
-    }
+      longitude: trail.coords[1],
+    },
   };
 
   return (
     <>
       {/* Add JSON-LD Script to the page head */}
       <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* Render the client component, passing the trail data as a prop */}
       <TrailSlugClientPage trail={trail} />
