@@ -3,7 +3,8 @@
 
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import L, { LatLngExpression } from 'leaflet';
+import type L from 'leaflet';
+import type { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { GeoJsonObject } from 'geojson';
@@ -19,96 +20,105 @@ interface OSRMStep {
 
 // --- MAIN CLIENT PAGE COMPONENT ---
 export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
-    const mapRef = useRef<L.Map | null>(null);
+    const mapRef = useRef<any>(null);
     const [route, setRoute] = useState<GeoJsonObject | null>(null);
     const [userLocation, setUserLocation] = useState<LatLngExpression | null>(null);
     const [statusMessage, setStatusMessage] = useState('');
     const [itinerary, setItinerary] = useState<(string | { type: string; text: string })[]>([]);
     const [isItineraryButtonDisabled, setIsItineraryButtonDisabled] = useState(false);
     const [dynamicItineraryStatus, setDynamicItineraryStatus] = useState('');
-    const [isClient, setIsClient] = useState(false)
+    const [isClient, setIsClient] = useState(false);
+    const [leaflet, setLeaflet] = useState<typeof import('leaflet') | null>(null);
+    const [icons, setIcons] = useState<{ trailIcon: any; userIcon: any } | null>(null);
+    const [MapComponents, setMapComponents] = useState<any>(null);
 
     useEffect(() => {
-        setIsClient(true)
-    }, [])
+        setIsClient(true);
+        // Dynamically import Leaflet and react-leaflet only on client
+        (async () => {
+            const L = (await import('leaflet')).default;
+            setLeaflet(L);
+            // Setup icons
+            interface IconDefaultPrototype {
+                _getIconUrl?: string;
+            }
+            delete (L.Icon.Default.prototype as IconDefaultPrototype)._getIconUrl;
+            L.Icon.Default.mergeOptions({
+                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            });
+            setIcons({
+                trailIcon: new L.Icon({
+                    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+                    shadowSize: [41, 41],
+                }),
+                userIcon: new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    shadowSize: [41, 41],
+                }),
+            });
+            // Dynamically import react-leaflet components
+            const [MapContainer, TileLayer, Marker, Popup, GeoJSON] = await Promise.all([
+                import('react-leaflet').then((mod) => mod.MapContainer),
+                import('react-leaflet').then((mod) => mod.TileLayer),
+                import('react-leaflet').then((mod) => mod.Marker),
+                import('react-leaflet').then((mod) => mod.Popup),
+                import('react-leaflet').then((mod) => mod.GeoJSON),
+            ]);
+            setMapComponents({ MapContainer, TileLayer, Marker, Popup, GeoJSON });
+        })();
+        if (trail) {
+            setItinerary(trail.itinerary);
+        }
+    }, [trail]);
 
 
-    const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
-    const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
-    const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
-    const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
-    const GeoJSON = dynamic(() => import('react-leaflet').then((mod) => mod.GeoJSON), { ssr: false });
+    // Map components are loaded dynamically in useEffect
 
     // --- MAP CONTROLLER COMPONENT ---
-    const MapController = ({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) => {
+    // MapController must only be defined on client
+    const MapController = isClient && leaflet && MapComponents ? ({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) => {
         const { useMap } = require('react-leaflet');
         const map = useMap();
         useEffect(() => {
             if (route && userLocation) {
-                const geoJsonLayer = L.geoJSON(route);
-                const bounds = geoJsonLayer.getBounds().extend(userLocation as L.LatLngTuple);
+                const geoJsonLayer = leaflet.geoJSON(route);
+                const bounds = geoJsonLayer.getBounds().extend(userLocation as any);
                 map.fitBounds(bounds, { padding: [50, 50] });
             } else {
                 map.setView(trailCoords, 14);
             }
         }, [route, userLocation, map, trailCoords]);
         return null;
-    }
+    } : () => null;
 
-    const [icons, setIcons] = useState<{ trailIcon: L.Icon; userIcon: L.Icon } | null>(null);
     const staticItinerary = trail.itinerary;
 
-    useEffect(() => {
-        // Initialize Leaflet icons on client side
-        interface IconDefaultPrototype {
-            _getIconUrl?: string;
-        }
-        delete (L.Icon.Default.prototype as IconDefaultPrototype)._getIconUrl;
-
-        L.Icon.Default.mergeOptions({
-            iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        });
-
-        setIcons({
-            trailIcon: new L.Icon({
-                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-                shadowSize: [41, 41],
-            }),
-            userIcon: new L.Icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                shadowSize: [41, 41],
-            }),
-        });
-
-        if (trail) {
-            setItinerary(trail.itinerary);
-        }
-    }, [trail]);
+    // ...existing code...
 
     const findUserLocation = useCallback(() => {
-        return new Promise<L.LatLng>((resolve, reject) => {
-            if (mapRef.current) {
-                mapRef.current.locate().on('locationfound', (e) => {
+        return new Promise<any>((resolve, reject) => {
+            if (mapRef.current && leaflet) {
+                mapRef.current.locate().on('locationfound', (e: any) => {
                     setUserLocation(e.latlng);
                     resolve(e.latlng);
-                }).on('locationerror', (e) => {
+                }).on('locationerror', (e: any) => {
                     reject(e.message);
                 });
             } else {
                 reject('Map not initialized');
             }
         });
-    }, []);
+    }, [leaflet]);
 
     const handleGetDirections = async () => {
         setStatusMessage('Getting your location...');
@@ -202,7 +212,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
 
 
     // Don't render the map until the icons are ready
-    if (!icons) {
+    if (!isClient || !leaflet || !icons || !MapComponents) {
         return (
             <div className="flex justify-center items-center" style={{ minHeight: 'calc(100vh - 200px)' }}>
                 <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-green-600"></div>
@@ -210,6 +220,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         );
     }
 
+    const { MapContainer, TileLayer, Marker, Popup, GeoJSON } = MapComponents || {};
     return (
         <div className="bg-white">
             <div className="w-full bg-white pt-8 pb-4">
@@ -236,7 +247,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
 
                 <div className="mb-12">
                     <div className="relative z-0 rounded-lg h-80 md:h-[400px] mb-4 border border-gray-300">
-                        {isClient && (
+                        {isClient && MapContainer && TileLayer && Marker && Popup && GeoJSON && icons && (
                             <MapContainer center={trail.coords} zoom={14} style={{ height: '100%', width: '100%' }} ref={mapRef}>
                                 <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
