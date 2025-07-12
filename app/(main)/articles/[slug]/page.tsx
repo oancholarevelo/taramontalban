@@ -11,7 +11,11 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ArticlePage({ params }: { params: { slug: string } }) {
+type PageProps = {
+  params: { slug: string };
+};
+
+export default function ArticlePage({ params }: PageProps) {
   const article = allArticles.find(a => a.slug === params.slug);
 
   if (!article) {
@@ -27,8 +31,8 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
                 <Image 
                     src={article.imageUrl} 
                     alt={`Header for ${article.title}`} 
-                    layout="fill" 
-                    objectFit="cover" 
+                    fill
+                    style={{objectFit: "cover"}}
                     className="rounded-xl"
                     priority
                 />
