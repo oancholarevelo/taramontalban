@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import DirectoryClientPage from './DirectoryClientPage';
 
 export const metadata: Metadata = {
-  title: 'Tourist Spots & Business Directory in Montalban, Rizal | Rodriguez Guide',
+  title: 'Tourist Spots & Business Directory in Montalban, Rizal | Tara Montalban',
   description: 'Find the best tourist spots, resorts, restaurants, and local businesses in Montalban (Rodriguez), Rizal. Your guide to exploring the adventure capital.',
 };
 

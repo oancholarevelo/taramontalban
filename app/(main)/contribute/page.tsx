@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Contribute | Rodriguez Guide',
-  description: 'Help grow the Rodriguez Guide! Learn how you can contribute by submitting local businesses, writing articles, or sharing feedback to support our community.',
+  title: 'Contribute | Tara Montalban',
+  description: 'Help grow the Tara Montalban! Learn how you can contribute by submitting local businesses, writing articles, or sharing feedback to support our community.',
 };
 
 export default function ContributePage() {

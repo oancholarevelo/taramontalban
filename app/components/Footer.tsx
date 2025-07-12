@@ -29,7 +29,7 @@ export default function Footer() {
             <Link href="/contribute" className="text-gray-500 hover:text-gray-600">Contribute</Link>
           </div>
           <div className="mt-8 md:mt-0 md:order-1">
-            <p className="text-center text-base text-gray-500">&copy; {new Date().getFullYear()} Rodriguez Guide. All rights reserved.</p>
+            <p className="text-center text-base text-gray-500">&copy; {new Date().getFullYear()} Tara Montalban. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -28,7 +28,7 @@ export default function Header() {
           
           <Link href="/" className="flex items-center space-x-2 text-xl font-bold text-gray-900 hover:text-green-700 transition-colors">
             <i className="fas fa-mountain-sun text-green-600"></i>
-            <span>Rodriguez Guide</span>
+            <span>Tara Montalban</span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-1">

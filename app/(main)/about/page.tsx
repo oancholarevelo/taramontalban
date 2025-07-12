@@ -3,8 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export const metadata: Metadata = {
-  title: 'About | Rodriguez Guide',
-  description: 'Discover the story and mission behind the Rodriguez Guide. Learn how we\'re dedicated to showcasing the adventure and beauty of Rodriguez, Rizal, through community-driven content.',
+  title: 'About | Tara Montalban',
+  description: 'Discover the story and mission behind the Tara Montalban. Learn how we\'re dedicated to showcasing the adventure and beauty of Rodriguez, Rizal, through community-driven content.',
 };
 
 export default function AboutPage() {
@@ -19,7 +19,7 @@ export default function AboutPage() {
               Sharing the Soul of <span className="text-green-600">Rodriguez, Rizal.</span>
             </h1>
             <p className="mt-3 text-base text-gray-600 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-              We believe that the best adventures are the ones shared. The Rodriguez Guide is a community-driven portal dedicated to showcasing the authentic beauty, culture, and spirit of our town.
+              We believe that the best adventures are the ones shared. The Tara Montalban is a community-driven portal dedicated to showcasing the authentic beauty, culture, and spirit of our town.
             </p>
             <div className="mt-8 sm:flex sm:justify-center lg:justify-start gap-3">
               <div className="rounded-md shadow">
@@ -93,7 +93,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <figure className="max-w-3xl mx-auto text-center">
             <blockquote className="text-2xl font-medium text-gray-800">
-              <p>&ldquo;The Rodriguez Guide is an indispensable tool for anyone looking to explore the area. It led me to hidden gems I never would have found on my own. It feels like getting advice from a trusted local friend.&rdquo;</p>
+              <p>&ldquo;The Tara Montalban is an indispensable tool for anyone looking to explore the area. It led me to hidden gems I never would have found on my own. It feels like getting advice from a trusted local friend.&rdquo;</p>
             </blockquote>
             <figcaption className="mt-8">
               <div className="text-base text-gray-900 font-semibold">Alex Reyes</div>
