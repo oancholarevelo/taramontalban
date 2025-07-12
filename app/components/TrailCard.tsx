@@ -11,7 +11,6 @@ interface Props {
   imageUrl: string;
   slug: string;
   difficultyColor: 'yellow' | 'red' | 'green';
-  layout: 'left' | 'right';
 }
 
 const colorClasses = {
@@ -20,27 +19,27 @@ const colorClasses = {
   green: 'bg-green-100 text-green-800',
 };
 
-export default function TrailCard({ name, difficulty, masl, description, imageUrl, slug, difficultyColor, layout }: Props) {
+export default function TrailCard({ name, difficulty, masl, description, imageUrl, slug, difficultyColor }: Props) {
   const shortDescription = description.split('. ')[0] + '.';
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 flex flex-col md:flex-row overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-300">
-      <div className={clsx("w-full md:w-1/2 flex-shrink-0", layout === 'right' && 'md:order-last')}>
-         <Image src={imageUrl} alt={`View from ${name}`} width={600} height={400} className="w-full h-64 md:h-auto object-cover"/>
-      </div>
-      <div className="flex-1 p-6 md:p-8 flex flex-col">
-        <h3 className="text-2xl font-bold text-gray-900">{name}</h3>
-        <div className="flex items-center my-2 gap-4">
-          <span className={clsx("px-3 py-1 rounded-full text-xs font-semibold", colorClasses[difficultyColor])}>
-            {difficulty}
-          </span>
-          <span className="text-sm text-gray-600 font-medium">{masl}</span>
+    <Link href={`/trails/${slug}`} className="block group bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-green-500">
+        <div className="relative w-full h-48">
+            <Image src={imageUrl} alt={`View from ${name}`} layout="fill" objectFit="cover" />
         </div>
-        <p className="text-gray-600 mb-4 text-sm md:text-base leading-relaxed">{shortDescription}</p>
-        <Link href={`/trails/${slug}`} className="font-semibold text-green-600 hover:underline mt-auto pt-4">
-          View Full Details &rarr;
-        </Link>
-      </div>
-    </div>
+        <div className="p-6 flex flex-col flex-grow">
+            <div className="flex items-center mb-2 gap-2">
+                <span className={clsx("px-2.5 py-0.5 rounded-full text-xs font-semibold", colorClasses[difficultyColor])}>
+                    {difficulty}
+                </span>
+                <span className="text-xs text-gray-600 font-medium">{masl}</span>
+            </div>
+            <h3 className="text-xl font-bold mb-2 text-gray-900">{name}</h3>
+            <p className="text-gray-600 mb-4 text-sm leading-relaxed flex-grow">{shortDescription}</p>
+            <span className="font-semibold text-green-600 group-hover:underline mt-auto pt-4 self-start">
+              View Details &rarr;
+            </span>
+        </div>
+    </Link>
   );
 }

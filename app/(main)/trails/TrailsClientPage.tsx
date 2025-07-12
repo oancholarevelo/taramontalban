@@ -77,9 +77,9 @@ export default function TrailsClientPage() {
         </div>
       </div>
 
-      <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredAndSortedTrails.length > 0 ? (
-            filteredAndSortedTrails.map((trail, index) => {
+            filteredAndSortedTrails.map((trail) => {
                 const difficulty = trail.difficulty;
                 let difficultyColor: 'yellow' | 'red' | 'green' = 'green';
                 const difficultyValue = getDifficultyValue(difficulty);
@@ -100,12 +100,11 @@ export default function TrailsClientPage() {
                         description={trail.description}
                         imageUrl={trail.imageUrl}
                         difficultyColor={difficultyColor}
-                        layout={index % 2 === 0 ? 'left' : 'right'}
                     />
                 );
             })
         ) : (
-            <p className="text-center text-gray-500 py-16">No trails found matching your criteria.</p>
+            <p className="col-span-full text-center text-gray-500 py-16">No trails found matching your criteria.</p>
         )}
       </div>
     </div>

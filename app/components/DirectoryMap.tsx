@@ -34,24 +34,22 @@ export default function DirectoryMap() {
   }, []);
 
   return (
-    <div style={{ height: '400px', width: '100%' }}>
-      <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        />
-        {businessesWithCoords.map((business) => (
-          <Marker key={business.slug} position={business.coords as L.LatLngExpression}>
-            <Popup>
-              <b>{business.name}</b>
-              <br />
-              <Link href={`/directory/${business.slug}`} className="text-green-600 font-bold" style={{ textDecoration: 'underline' }}>
-                View Details
-              </Link>
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-    </div>
+    <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      />
+      {businessesWithCoords.map((business) => (
+        <Marker key={business.slug} position={business.coords as L.LatLngExpression}>
+          <Popup>
+            <b>{business.name}</b>
+            <br />
+            <Link href={`/directory/${business.slug}`} className="text-green-600 font-bold" style={{ textDecoration: 'underline' }}>
+              View Details
+            </Link>
+          </Popup>
+        </Marker>
+      ))}
+    </MapContainer>
   );
 }

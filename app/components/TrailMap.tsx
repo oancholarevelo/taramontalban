@@ -71,32 +71,30 @@ export default function TrailMap() {
   };
 
   return (
-    <div style={{ height: '400px', width: '100%' }}>
-      <MapContainer center={[14.76, 121.19]} zoom={12} style={{ height: '100%', width: '100%' }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        />
-        {allTrails.map((trail) => (
-          <Marker key={trail.slug} position={trail.coords}>
-            <Popup>
-              <b>{trail.name}</b>
-              <br />
-              <Link href={`/trails/${trail.slug}`} className="text-green-600 font-bold" style={{ textDecoration: 'underline' }}>
-                View Details
-              </Link>
-              <br />
-              <button
-                onClick={() => handleGetDirections(trail.coords)}
-                className="mt-2 p-1 bg-green-600 text-white rounded cursor-pointer"
-              >
-                Get Directions
-              </button>
-            </Popup>
-          </Marker>
-        ))}
-        {route && <GeoJSON data={route as GeoJsonObject} style={{ color: '#16a34a', weight: 5 }} />}
-      </MapContainer>
-    </div>
+    <MapContainer center={[14.76, 121.19]} zoom={12} style={{ height: '100%', width: '100%' }}>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      />
+      {allTrails.map((trail) => (
+        <Marker key={trail.slug} position={trail.coords}>
+          <Popup>
+            <b>{trail.name}</b>
+            <br />
+            <Link href={`/trails/${trail.slug}`} className="text-green-600 font-bold" style={{ textDecoration: 'underline' }}>
+              View Details
+            </Link>
+            <br />
+            <button
+              onClick={() => handleGetDirections(trail.coords)}
+              className="mt-2 p-1 bg-green-600 text-white rounded cursor-pointer"
+            >
+              Get Directions
+            </button>
+          </Popup>
+        </Marker>
+      ))}
+      {route && <GeoJSON data={route as GeoJsonObject} style={{ color: '#16a34a', weight: 5 }} />}
+    </MapContainer>
   );
 }

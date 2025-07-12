@@ -65,8 +65,7 @@ export default function DirectoryClientPage() {
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-gray-700">Filter by:</span>
+        <div className="flex flex-wrap items-center justify-center gap-2">
           {categories.map(category => (
             <button
               key={category}

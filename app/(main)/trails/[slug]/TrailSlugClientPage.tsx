@@ -2,7 +2,6 @@
 "use client";
 
 import Image from 'next/image';
-// import dynamic from 'next/dynamic';
 import type L from 'leaflet';
 import type { LatLngExpression } from 'leaflet';
 import type {
@@ -93,12 +92,6 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         }
     }, [trail]);
 
-
-    // Map components are loaded dynamically in useEffect
-
-    // --- MAP CONTROLLER COMPONENT ---
-    // MapController must only be defined on client
-    // MapController must be a standard React component (not conditional)
     function MapController({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) {
         const { useMap } = require('react-leaflet');
         const map = useMap();
@@ -117,13 +110,9 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
     }
 
     const staticItinerary = trail.itinerary;
-
-    // ...existing code...
-
-    // Remove findUserLocation and use a controller component instead
-
-    // State to trigger user location finding
     const [findLocationFor, setFindLocationFor] = useState<'directions' | 'itinerary' | null>(null);
+
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${trail.coords[0]},${trail.coords[1]}`;
 
     const handleGetDirections = () => {
         setStatusMessage('Getting your location...');
@@ -171,7 +160,6 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         setFindLocationFor('itinerary');
     };
 
-    // This component will use useMap to find user location and call the appropriate handler
     function UserLocationController() {
         const { useMap } = require('react-leaflet');
         const map = useMap();
@@ -191,10 +179,12 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
                             setRoute(data.routes[0].geometry);
                             setStatusMessage('Route shown on map!');
                         } else {
-                            setStatusMessage('No route found.');
+                            setStatusMessage('No route found. Redirecting to Google Maps...');
+                            window.open(googleMapsUrl, '_blank');
                         }
                     } catch {
-                        setStatusMessage('Could not get directions.');
+                        setStatusMessage('Could not get directions. Redirecting to Google Maps...');
+                        window.open(googleMapsUrl, '_blank');
                     }
                 } else if (findLocationFor === 'itinerary') {
                     setDynamicItineraryStatus('Fetching simplified directions...');
@@ -219,7 +209,10 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
                 }
                 setFindLocationFor(null);
             }).on('locationerror', (e: { message: string }) => {
-                if (findLocationFor === 'directions') setStatusMessage(e.message);
+                if (findLocationFor === 'directions') {
+                   setStatusMessage(e.message + '. Redirecting to Google Maps...');
+                   window.open(googleMapsUrl, '_blank');
+                }
                 if (findLocationFor === 'itinerary') setDynamicItineraryStatus(e.message);
                 setFindLocationFor(null);
             });
@@ -227,10 +220,6 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         return null;
     }
 
-    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${trail.coords[0]},${trail.coords[1]}`;
-
-
-    // Don't render the map until the icons are ready
     if (!isClient || !leaflet || !icons || !MapComponents) {
         return (
             <div className="flex justify-center items-center" style={{ minHeight: 'calc(100vh - 200px)' }}>
