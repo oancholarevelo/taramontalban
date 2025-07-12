@@ -10,19 +10,11 @@ import { GeoJsonObject } from 'geojson';
 import { allTrails as trailsData } from '@/app/data/trails';
 
 // Dynamic imports for react-leaflet components
-const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
-const GeoJSON = dynamic(() => import('react-leaflet').then(mod => mod.GeoJSON), { ssr: false });
-
-// Fix for default marker icon issue
-interface IconOptions {
-  _getIconUrl?: string;
-  iconRetinaUrl: string;
-  iconUrl: string;
-  shadowUrl: string;
-}
+const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
+const GeoJSON = dynamic(() => import('react-leaflet').then((mod) => mod.GeoJSON), { ssr: false });
 
 type Trail = {
   name: string;
@@ -36,7 +28,11 @@ export default function TrailMap() {
 
   // Initialize Leaflet icons on client side
   useEffect(() => {
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    // Use proper type for L.Icon.Default.prototype
+    interface IconDefaultPrototype {
+      _getIconUrl?: string;
+    }
+    delete (L.Icon.Default.prototype as IconDefaultPrototype)._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
       iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -79,7 +75,7 @@ export default function TrailMap() {
       <MapContainer center={[14.76, 121.19]} zoom={12} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
         {allTrails.map((trail) => (
           <Marker key={trail.slug} position={trail.coords}>

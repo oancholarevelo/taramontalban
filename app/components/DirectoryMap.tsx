@@ -9,18 +9,10 @@ import Link from 'next/link';
 import { businesses } from '@/app/data/businesses';
 
 // Dynamic imports for react-leaflet components
-const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
-
-// Fix for default marker icon issue
-interface IconOptions {
-  _getIconUrl?: string;
-  iconRetinaUrl: string;
-  iconUrl: string;
-  shadowUrl: string;
-}
+const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
 
 const businessesWithCoords = businesses.filter((b) => b.coords);
 
@@ -29,7 +21,11 @@ export default function DirectoryMap() {
 
   // Initialize Leaflet icons on client side
   useEffect(() => {
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    // Use proper type for L.Icon.Default.prototype
+    interface IconDefaultPrototype {
+      _getIconUrl?: string;
+    }
+    delete (L.Icon.Default.prototype as IconDefaultPrototype)._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
       iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -42,7 +38,7 @@ export default function DirectoryMap() {
       <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
         {businessesWithCoords.map((business) => (
           <Marker key={business.slug} position={business.coords as L.LatLngExpression}>

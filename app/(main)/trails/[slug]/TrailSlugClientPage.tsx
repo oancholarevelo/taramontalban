@@ -4,18 +4,18 @@
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import L, { LatLngExpression } from 'leaflet';
+import { useMap } from 'react-leaflet'; // Direct import for useMap
 import 'leaflet/dist/leaflet.css';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { GeoJsonObject } from 'geojson';
 import type { Trail } from '@/app/data/trails';
 
-// Dynamic imports for react-leaflet components
+// Dynamic imports for react-leaflet components (excluding useMap)
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
 const GeoJSON = dynamic(() => import('react-leaflet').then((mod) => mod.GeoJSON), { ssr: false });
-import { useMap } from 'react-leaflet';
 
 // --- INTERFACES AND TYPE DEFINITIONS ---
 interface OSRMStep {
@@ -25,16 +25,9 @@ interface OSRMStep {
   duration: number;
 }
 
-interface IconOptions {
-  _getIconUrl?: string;
-  iconRetinaUrl: string;
-  iconUrl: string;
-  shadowUrl: string;
-}
-
 // --- MAP CONTROLLER COMPONENT ---
 function MapController({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) {
-  const map = useMap();
+  const map = useMap(); // Directly use the hook
   useEffect(() => {
     if (route && userLocation) {
       const geoJsonLayer = L.geoJSON(route);
@@ -61,7 +54,10 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
 
   useEffect(() => {
     // Initialize Leaflet icons on client side
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    interface IconDefaultPrototype {
+      _getIconUrl?: string;
+    }
+    delete (L.Icon.Default.prototype as IconDefaultPrototype)._getIconUrl;
 
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -142,7 +138,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
   const formatManeuver = (step: OSRMStep) => {
     const { type, modifier } = step.maneuver;
     const street = step.name.replace(/,$/, '');
-    const distance = step.distance > 1000 ? `${parseFloat((step.distance / 1000).toFixed(1))} km` : `${Math.round(step.distance)} m`;
+    const distance = step.distance > 1000 ? `${(step.distance / 1000).toFixed(1)} km` : `${Math.round(step.distance)} m`;
 
     if (type === 'depart') return `Start by heading towards ${street}.`;
     if (type === 'arrive') return `You will arrive at the trailhead.`;
@@ -230,7 +226,10 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         <div className="mb-12">
           <div className="relative z-0 rounded-lg h-80 md:h-[400px] mb-4 border border-gray-300">
             <MapContainer center={trail.coords} zoom={14} style={{ height: '100%', width: '100%' }} ref={mapRef}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' />
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              />
               <MapController route={route} userLocation={userLocation} trailCoords={trail.coords} />
               <Marker position={trail.coords} icon={icons.trailIcon}>
                 <Popup>
