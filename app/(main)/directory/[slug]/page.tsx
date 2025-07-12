@@ -1,4 +1,3 @@
-// app/(main)/directory/[slug]/page.tsx
 import { businesses } from '@/app/data/businesses';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -10,8 +9,13 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function BusinessDetailPage({ params }: { params: { slug: string } }) {
-  const business = businesses.find(b => b.slug === params.slug);
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export default async function BusinessDetailPage({ params }: PageProps) {
+  const { slug } = await params; // Await the params Promise to get the slug
+  const business = businesses.find(b => b.slug === slug);
 
   if (!business) {
     notFound();
@@ -24,33 +28,35 @@ export default function BusinessDetailPage({ params }: { params: { slug: string 
     gray: '#6B7280',
     orange: '#F97316',
     yellow: '#F59E0B',
-    grey: '#6B7280' // Handle 'grey' alias
+    grey: '#6B7280', // Handle 'grey' alias
   };
-  
+
   const backgroundColor = colorMap[business.color] || '#6B7280';
 
   return (
     <div className="bg-white">
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden mb-8 shadow-lg">
-          <Image 
-            src={business.imageUrl} 
-            alt={business.name} 
-            layout="fill"
-            objectFit="cover"
-            priority 
+          <Image
+            src={business.imageUrl}
+            alt={business.name}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{ objectFit: 'cover' }}
+            className="rounded-lg"
+            priority
           />
         </div>
-        
+
         <div className="text-center">
-            <span 
-                className="inline-block px-4 py-1.5 rounded-full text-white text-sm font-semibold mb-4" 
-                style={{ backgroundColor }}
-            >
-                {business.category}
-            </span>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">{business.name}</h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">{business.description}</p>
+          <span
+            className="inline-block px-4 py-1.5 rounded-full text-white text-sm font-semibold mb-4"
+            style={{ backgroundColor }}
+          >
+            {business.category}
+          </span>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">{business.name}</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{business.description}</p>
         </div>
 
         {business.details && (
