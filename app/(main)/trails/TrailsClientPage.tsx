@@ -1,4 +1,3 @@
-// app/(main)/trails/TrailsClientPage.tsx
 "use client";
 
 import { useState, useMemo, Suspense } from 'react';

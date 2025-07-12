@@ -10,11 +10,9 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="bg-white">
-      {/* --- Hero Section --- */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
           
-          {/* --- Text Content Column --- */}
           <div className="text-center lg:text-left">
             <span className="font-semibold text-green-600 uppercase tracking-wide">Our Story</span>
             <h1 className="mt-4 text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
@@ -43,7 +41,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* --- Image Column --- */}
           <div className="mt-12 lg:mt-0">
             <Image
               className="h-56 w-full object-cover rounded-xl shadow-lg sm:h-72 md:h-96 lg:w-full lg:h-full"
@@ -58,7 +55,6 @@ export default function AboutPage() {
       </div>
 
 
-      {/* --- Guiding Principles Section --- */}
       <div className="bg-white py-24 sm:py-32">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center">
@@ -68,7 +64,6 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12">
-            {/* Principle 1: Authenticity */}
             <div className="text-center">
               <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-green-600 text-white mx-auto">
                 <i className="fas fa-check-circle text-2xl" aria-hidden="true"></i>
@@ -76,7 +71,6 @@ export default function AboutPage() {
               <h3 className="mt-5 text-xl font-semibold text-gray-900">Authenticity</h3>
               <p className="mt-2 text-base text-gray-600">Providing genuine, first-hand accounts and verified information you can trust.</p>
             </div>
-            {/* Principle 2: Community */}
             <div className="text-center">
               <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-green-600 text-white mx-auto">
                 <i className="fas fa-users text-2xl" aria-hidden="true"></i>
@@ -84,19 +78,17 @@ export default function AboutPage() {
               <h3 className="mt-5 text-xl font-semibold text-gray-900">Community</h3>
               <p className="mt-2 text-base text-gray-600">Championing local businesses and empowering community storytellers.</p>
             </div>
-            {/* Principle 3: Adventure */}
             <div className="text-center">
               <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-green-600 text-white mx-auto">
                 <i className="fas fa-mountain text-2xl" aria-hidden="true"></i>
               </div>
               <h3 className="mt-5 text-xl font-semibold text-gray-900">Adventure</h3>
-              <p className="mt-2 text-base text-gray-600">Inspiring responsible exploration of Rodriguez's breathtaking natural wonders.</p>
+              <p className="mt-2 text-base text-gray-600">Inspiring responsible exploration of Rodriguez&apos;s breathtaking natural wonders.</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* --- Testimonial Section --- */}
       <div className="bg-white py-24 sm:py-32">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <figure className="max-w-3xl mx-auto text-center">

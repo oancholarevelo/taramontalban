@@ -1,4 +1,3 @@
-// app/components/SkeletonCard.tsx
 export default function SkeletonCard() {
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">

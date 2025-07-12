@@ -1,4 +1,3 @@
-// app/(main)/trails/[slug]/TrailSlugClientPage.tsx
 "use client";
 
 import Image from 'next/image';
@@ -16,7 +15,6 @@ import { useState, useEffect } from 'react';
 import { GeoJsonObject } from 'geojson';
 import type { Trail } from '@/app/data/trails';
 
-// --- INTERFACES AND TYPE DEFINITIONS ---
 interface OSRMStep {
     maneuver: { type: string; modifier?: string; location: [number, number] };
     name: string;
@@ -24,7 +22,6 @@ interface OSRMStep {
     duration: number;
 }
 
-// --- MAIN CLIENT PAGE COMPONENT ---
 export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
     const [route, setRoute] = useState<GeoJsonObject | null>(null);
     const [userLocation, setUserLocation] = useState<LatLngExpression | null>(null);
@@ -45,11 +42,9 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
 
     useEffect(() => {
         setIsClient(true);
-        // Dynamically import Leaflet and react-leaflet only on client
         (async () => {
             const L = (await import('leaflet')).default;
             setLeaflet(L);
-            // Setup icons
             interface IconDefaultPrototype {
                 _getIconUrl?: string;
             }

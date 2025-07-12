@@ -1,10 +1,8 @@
-// app/components/Footer.tsx
 import Link from 'next/link';
 
 export default function Footer() {
   return (
     <>
-      {/* CTA Banner Section */}
       <div className="bg-green-600">
         <div className="max-w-7xl mx-auto text-center py-16 px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
@@ -22,7 +20,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Standard Footer */}
       <footer className="bg-white border-t border-gray-200">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
           <div className="flex justify-center space-x-6 md:order-2">

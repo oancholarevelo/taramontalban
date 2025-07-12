@@ -1,4 +1,3 @@
-// app/components/ArticleCard.tsx
 import Link from 'next/link';
 
 interface Props {
@@ -7,7 +6,6 @@ interface Props {
   author: string;
   date: string;
   slug: string;
-  // You can add a 'tags' prop to your data/articles.ts to use this feature
   tags?: string[];
   imageUrl: string;
 }
@@ -18,7 +16,6 @@ export default function ArticleCard({ title, excerpt, author, date, slug, tags =
       href={`/articles/${slug}`}
       className="block group bg-white rounded-lg border border-gray-200 p-6 flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-green-500"
     >
-      {/* Tags Section */}
       {tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
             {tags.map(tag => (
@@ -29,17 +26,14 @@ export default function ArticleCard({ title, excerpt, author, date, slug, tags =
           </div>
       )}
 
-      {/* Title */}
       <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-green-600 transition-colors">
         {title}
       </h3>
 
-      {/* Excerpt */}
       <p className="text-gray-600 mb-4 text-sm leading-relaxed flex-grow">
         {excerpt}
       </p>
 
-      {/* Author and Date Footer */}
       <div className="mt-auto pt-4 border-t border-gray-100">
         <p className="text-xs text-gray-500">By {author} • {date}</p>
       </div>

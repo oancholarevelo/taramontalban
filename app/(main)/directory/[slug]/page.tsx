@@ -1,9 +1,7 @@
-// app/(main)/directory/[slug]/page.tsx
 import { businesses } from '@/app/data/businesses';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 
-// This function generates the static pages at build time
 export async function generateStaticParams() {
   return businesses.map(business => ({
     slug: business.slug,
@@ -22,10 +20,8 @@ export default async function BusinessDetailPage({ params }: PageProps) {
     notFound();
   }
   
-  // Structured Data (JSON-LD) for SEO
   const jsonLd = {
     '@context': 'https://schema.org',
-    // Choose schema type based on category
     '@type': business.category === 'Resort' ? 'Resort' : 'LocalBusiness',
     name: business.name,
     description: business.description,
@@ -59,7 +55,6 @@ export default async function BusinessDetailPage({ params }: PageProps) {
 
   return (
     <div className="bg-white">
-      {/* Add JSON-LD Script */}
        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

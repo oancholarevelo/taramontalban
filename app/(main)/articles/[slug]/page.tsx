@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 
-// This function generates the static paths for all articles at build time
 export async function generateStaticParams() {
   return allArticles.map(article => ({
     slug: article.slug,
@@ -16,18 +15,16 @@ type PageProps = {
 };
 
 export default async function ArticlePage({ params }: PageProps) {
-  const { slug } = await params; // Await the params Promise
+  const { slug } = await params;
   const article = allArticles.find(a => a.slug === slug);
 
   if (!article) {
     notFound();
   }
 
-  // Find a few related articles (excluding the current one)
   const relatedArticles = allArticles.filter(a => a.slug !== slug).slice(0, 3);
 
-  // Social Share URLs
-  const pageUrl = `https://your-website.com/articles/${slug}`; // Replace with your actual domain
+  const pageUrl = `https://taramontalban.vercel.app/articles/${slug}`;
   const shareText = `Check out this article: ${article.title}`;
   const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(shareText)}`;
   const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
@@ -36,7 +33,6 @@ export default async function ArticlePage({ params }: PageProps) {
     <div className="bg-white py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Back to Articles Link */}
         <div className="mb-8">
           <Link href="/articles" className="text-sm font-medium text-green-600 hover:text-green-800">
             &larr; Back to Articles
@@ -45,11 +41,9 @@ export default async function ArticlePage({ params }: PageProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12">
           
-          {/* Main Article Content */}
           <div className="lg:col-span-2">
             <div className="prose lg:prose-lg max-w-none">
               
-              {/* Article Header */}
               <div className="mb-8">
                 <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 !mb-3">
                     {article.title}
@@ -60,7 +54,6 @@ export default async function ArticlePage({ params }: PageProps) {
                 <hr className="mt-6" />
               </div>
 
-              {/* Centered Image */}
               <div className="relative w-full h-80 my-8 shadow-md">
                   <Image
                     src={article.imageUrl}
@@ -72,16 +65,13 @@ export default async function ArticlePage({ params }: PageProps) {
                   />
               </div>
               
-              {/* Article Body */}
               <ReactMarkdown>{article.content}</ReactMarkdown>
             </div>
           </div>
 
-          {/* Sidebar */}
           <aside className="lg:col-span-1 mt-12 lg:mt-0">
             <div className="sticky top-24 space-y-8">
               
-              {/* Social Share Card */}
               <div>
                 <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Share This Article</h3>
                 <div className="flex space-x-4">
@@ -94,7 +84,6 @@ export default async function ArticlePage({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Related Articles Card */}
               <div>
                 <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Related Posts</h3>
                 <ul className="space-y-6">

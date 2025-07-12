@@ -1,4 +1,3 @@
-// app/(main)/directory/DirectoryClientPage.tsx
 "use client";
 
 import { useState, useMemo, Suspense } from 'react';

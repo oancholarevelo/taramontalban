@@ -1,14 +1,10 @@
-// app/(main)/trails/[slug]/page.tsx
 import type { Metadata } from 'next';
 import { allTrails } from '@/app/data/trails';
 import { notFound } from 'next/navigation';
 import TrailSlugClientPage from './TrailSlugClientPage';
 
-// --- SERVER-SIDE FUNCTIONS ---
-
-// Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params; // Await params to get slug
+  const { slug } = await params;
   const trail = allTrails[slug];
 
   if (!trail) {
@@ -27,23 +23,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-// Generate static paths at build time for performance
 export async function generateStaticParams() {
   return Object.keys(allTrails).map(slug => ({
     slug,
   }));
 }
 
-// --- MAIN PAGE COMPONENT (SERVER) ---
 export default async function TrailDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params; // Await params to get slug
+  const { slug } = await params;
   const trail = allTrails[slug];
 
   if (!trail) {
     notFound();
   }
 
-  // --- SEO: STRUCTURED DATA (JSON-LD) ---
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'TouristAttraction',
@@ -65,12 +58,10 @@ export default async function TrailDetailPage({ params }: { params: Promise<{ sl
 
   return (
     <>
-      {/* Add JSON-LD Script to the page head */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* Render the client component, passing the trail data as a prop */}
       <TrailSlugClientPage trail={trail} />
     </>
   );

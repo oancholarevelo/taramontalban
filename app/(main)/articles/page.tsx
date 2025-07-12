@@ -1,4 +1,3 @@
-// app/(main)/articles/page.tsx
 import ArticleCard from '@/app/components/ArticleCard';
 import { allArticles } from '@/app/data/articles';
 

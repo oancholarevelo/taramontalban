@@ -1,7 +1,5 @@
-// app/(main)/contribute/page.tsx
 import type { Metadata } from 'next';
 
-// SEO Metadata for the new page
 export const metadata: Metadata = {
   title: 'Contribute | Rodriguez Guide',
   description: 'Help grow the Rodriguez Guide! Learn how you can contribute by submitting local businesses, writing articles, or sharing feedback to support our community.',
@@ -20,12 +18,8 @@ export default function ContributePage() {
           </p>
         </div>
 
-        {/* --- Contribution Options as Cards --- */}
-        {/* Using a grid makes the layout responsive and visually appealing. */}
-        {/* It stacks on mobile and expands to columns on larger screens. */}
         <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           
-          {/* Card 1: Submit a Place */}
           <div className="flex flex-col items-center text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
               <i className="fas fa-store text-3xl text-green-600"></i>
@@ -36,18 +30,16 @@ export default function ContributePage() {
             </p>
           </div>
 
-          {/* Card 2: Write an Article */}
           <div className="flex flex-col items-center text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
               <i className="fas fa-pen-alt text-3xl text-green-600"></i>
             </div>
             <h2 className="mt-6 text-xl font-bold text-gray-900">Write for Us</h2>
             <p className="mt-2 text-base text-gray-600">
-              Share your stories, hiking experiences, or guides. We're always looking for fresh perspectives on Montalban's adventures.
+              Share your stories, hiking experiences, or guides. We&apos;re always looking for fresh perspectives on Montalban&apos;s adventures.
             </p>
           </div>
           
-          {/* Card 3: Provide Feedback */}
           <div className="flex flex-col items-center text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
               <i className="fas fa-bullhorn text-3xl text-green-600"></i>
@@ -59,7 +51,6 @@ export default function ContributePage() {
           </div>
         </div>
 
-        {/* --- Call to Action --- */}
         <div className="mt-20 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900">Ready to Get Started?</h2>
             <p className="mt-3 text-lg text-gray-600">

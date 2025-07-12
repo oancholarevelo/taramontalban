@@ -1,4 +1,3 @@
-// app/components/TrailMap.tsx
 "use client";
 
 import dynamic from 'next/dynamic';
@@ -9,7 +8,6 @@ import Link from 'next/link';
 import { GeoJsonObject } from 'geojson';
 import { allTrails as trailsData } from '@/app/data/trails';
 
-// Dynamic imports for react-leaflet components
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
@@ -26,9 +24,7 @@ const allTrails: Trail[] = Object.values(trailsData);
 export default function TrailMap() {
   const [route, setRoute] = useState<GeoJsonObject | null>(null);
 
-  // Initialize Leaflet icons on client side
   useEffect(() => {
-    // Use proper type for L.Icon.Default.prototype
     interface IconDefaultPrototype {
       _getIconUrl?: string;
     }

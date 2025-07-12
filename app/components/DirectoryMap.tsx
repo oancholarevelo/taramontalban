@@ -1,4 +1,3 @@
-// app/components/DirectoryMap.tsx
 "use client";
 
 import dynamic from 'next/dynamic';
@@ -8,7 +7,6 @@ import 'leaflet/dist/leaflet.css';
 import Link from 'next/link';
 import { businesses } from '@/app/data/businesses';
 
-// Dynamic imports for react-leaflet components
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
@@ -19,9 +17,7 @@ const businessesWithCoords = businesses.filter((b) => b.coords);
 export default function DirectoryMap() {
   const center: L.LatLngExpression = [14.73, 121.19];
 
-  // Initialize Leaflet icons on client side
   useEffect(() => {
-    // Use proper type for L.Icon.Default.prototype
     interface IconDefaultPrototype {
       _getIconUrl?: string;
     }

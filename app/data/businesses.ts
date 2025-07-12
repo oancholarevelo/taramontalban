@@ -6,9 +6,9 @@ export interface Business {
     imageUrl: string;
     color: string;
     details?: string;
-    address: string; // Added for exact location
-    phone?: string; // Optional phone number
-    website?: string; // Optional website
+    address: string;
+    phone?: string;
+    website?: string;
     coords?: [number, number];
 }
 
@@ -22,7 +22,7 @@ export const businesses: Business[] = [
         color: "green",
         details: "Noah's Park Resort offers a variety of amenities including swimming pools, picnic areas, and scenic mountain views. It's an ideal destination for families and groups looking for a relaxing escape in a natural setting.",
         address: "Rodriguez (Montalban), Rizal",
-        phone: "+63 917 123 4567", // Example phone
+        phone: "+63 917 123 4567",
         website: "facebook.com/noahsparkresort",
         coords: [14.7234, 121.1895],
     },

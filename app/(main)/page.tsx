@@ -1,10 +1,8 @@
-// app/(main)/page.tsx
 import Link from 'next/link';
 
 export default function HomePage() {
   return (
     <>
-      {/* Hero Section */}
       <header className="relative bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900 animate-fade-in-down">
@@ -21,7 +19,6 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Features Section */}
       <section className="py-16 bg-white border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -29,7 +26,6 @@ export default function HomePage() {
             <p className="mt-2 text-lg text-gray-600">A centralized hub for everything Rodriguez.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Feature Cards */}
             <div className="text-center p-6 bg-gray-50 rounded-lg border border-gray-200 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
               <i className="fas fa-store text-4xl text-green-600 mb-4"></i>
               <h3 className="text-xl font-semibold mb-2">Business Directory</h3>

@@ -5,7 +5,7 @@ export interface Article {
     date: string;
     excerpt: string;
     imageUrl: string;
-    content: string; // Full article content in Markdown
+    content: string;
 }
 
 export const allArticles: Article[] = [
