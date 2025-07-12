@@ -5,6 +5,13 @@ import Image from 'next/image';
 // import dynamic from 'next/dynamic';
 import type L from 'leaflet';
 import type { LatLngExpression } from 'leaflet';
+import type {
+    MapContainerProps,
+    TileLayerProps,
+    MarkerProps,
+    PopupProps,
+    GeoJSONProps
+} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { GeoJsonObject } from 'geojson';
@@ -31,11 +38,11 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
     const [leaflet, setLeaflet] = useState<typeof import('leaflet') | null>(null);
     const [icons, setIcons] = useState<{ trailIcon: L.Icon; userIcon: L.Icon } | null>(null);
     const [MapComponents, setMapComponents] = useState<{
-        MapContainer: React.ComponentType<any>;
-        TileLayer: React.ComponentType<any>;
-        Marker: React.ComponentType<any>;
-        Popup: React.ComponentType<any>;
-        GeoJSON: React.ComponentType<any>;
+        MapContainer: React.ComponentType<MapContainerProps>;
+        TileLayer: React.ComponentType<TileLayerProps>;
+        Marker: React.ComponentType<MarkerProps>;
+        Popup: React.ComponentType<PopupProps>;
+        GeoJSON: React.ComponentType<GeoJSONProps>;
     } | null>(null);
 
     useEffect(() => {
@@ -94,11 +101,12 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
     // MapController must only be defined on client
     // MapController must be a standard React component (not conditional)
     function MapController({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) {
-        // Only run on client and when leaflet is loaded
-        const { useMap } = MapComponents ? require('react-leaflet') : { useMap: () => null };
-        const map = useMap && useMap();
+        // Only render if dependencies are loaded
+        if (!leaflet || !MapComponents) return null;
+        const { useMap } = require('react-leaflet');
+        const map = useMap();
         useEffect(() => {
-            if (!leaflet || !map) return;
+            if (!map) return;
             if (route && userLocation) {
                 const geoJsonLayer = leaflet.geoJSON(route);
                 const bounds = geoJsonLayer.getBounds().extend(userLocation as L.LatLngTuple);
@@ -106,7 +114,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
             } else {
                 map.setView(trailCoords, 14);
             }
-        }, [route, userLocation, map, trailCoords, leaflet]);
+        }, [route, userLocation, map, trailCoords]);
         return null;
     }
 
@@ -257,7 +265,13 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
                 <div className="mb-12">
                     <div className="relative z-0 rounded-lg h-80 md:h-[400px] mb-4 border border-gray-300">
                         {isClient && MapContainer && TileLayer && Marker && Popup && GeoJSON && icons && (
-                            <MapContainer center={trail.coords} zoom={14} style={{ height: '100%', width: '100%' }} ref={mapRef}>
+                            <MapContainer center={trail.coords} zoom={14} style={{ height: '100%', width: '100%' }} whenReady={() => {
+                                if (mapRef.current == null && leaflet) {
+                                    // Use leaflet's map instance from the DOM
+                                    const mapInstance = leaflet.map(document.querySelector('.leaflet-container') as HTMLElement);
+                                    mapRef.current = mapInstance;
+                                }
+                            }}>
                                 <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     attribution='© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
