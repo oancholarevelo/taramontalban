@@ -1,4 +1,3 @@
-// app/(main)/articles/[slug]/page.tsx
 import { allArticles } from '@/app/data/articles';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -12,11 +11,12 @@ export async function generateStaticParams() {
 }
 
 type PageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
-export default function ArticlePage({ params }: PageProps) {
-  const article = allArticles.find(a => a.slug === params.slug);
+export default async function ArticlePage({ params }: PageProps) {
+  const { slug } = await params; // Await the params Promise to get the slug
+  const article = allArticles.find(a => a.slug === slug);
 
   if (!article) {
     notFound();
@@ -24,19 +24,19 @@ export default function ArticlePage({ params }: PageProps) {
 
   return (
     <div className="bg-white">
-      {/* New Cover Photo Container */}
+      {/* Cover Photo Container */}
       <div className="w-full bg-white pt-8 pb-4">
         <div className="max-w-5xl mx-auto px-4">
-            <div className="relative w-full h-96 shadow-lg">
-                <Image 
-                    src={article.imageUrl} 
-                    alt={`Header for ${article.title}`} 
-                    fill
-                    style={{objectFit: "cover"}}
-                    className="rounded-xl"
-                    priority
-                />
-            </div>
+          <div className="relative w-full h-96 shadow-lg">
+            <Image
+              src={article.imageUrl}
+              alt={`Header for ${article.title}`}
+              fill
+              style={{ objectFit: 'cover' }}
+              className="rounded-xl"
+              priority
+            />
+          </div>
         </div>
       </div>
 
