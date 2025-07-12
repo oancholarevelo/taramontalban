@@ -3,11 +3,6 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-:root {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -20,39 +15,88 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-background);
+  color: var(--color-foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Animations */
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes fade-in-subtle {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes fade-in-down {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Minimalist Timeline */
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 24px */
 }
 
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* The vertical line */
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background-color: #e5e7eb; /* border-gray-200 */
+  border-radius: 2px;
 }
 
-.animate-fade-in {
-  animation: fade-in 0.8s ease-out forwards;
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem; /* 16px */
+  position: relative;
+  padding-left: 2.5rem; /* 40px */
+  opacity: 0;
+  animation: fade-in-subtle 0.6s ease-out forwards;
 }
 
-.animate-fade-in-down {
-  animation: fade-in-down 0.8s ease-out forwards;
+.timeline-dot {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background-color: white;
+  border: 2px solid #e5e7eb; /* border-gray-200 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.8s ease-out forwards;
+.timeline-item:hover .timeline-dot {
+    border-color: #10B981; /* green-600 */
+    transform: scale(1.1);
 }
 
-.glow {
-  box-shadow: 0 0 15px rgba(4, 120, 87, 0.4);
+.timeline-dot i {
+  color: #10B981; /* text-green-600 */
+  transition: transform 0.2s ease-in-out;
+}
+
+.timeline-item:hover .timeline-dot i {
+    transform: scale(1.2);
+}
+
+.timeline-content {
+  padding-top: 2px;
+}
+
+.timeline-content p {
+  margin: 0;
+  line-height: 1.5;
+  color: #4b5563; /* text-gray-600 */
 }

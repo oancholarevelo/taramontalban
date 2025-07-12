@@ -4,9 +4,10 @@
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { allTrails as trailsData } from '@/app/data/trails';
 import Link from 'next/link';
+import { GeoJsonObject } from 'geojson';
 
 // Fix for default marker icon issue with webpack
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -27,7 +28,7 @@ const allTrails: Trail[] = Object.values(trailsData);
 
 
 export default function TrailMap() {
-    const [route, setRoute] = useState<any>(null);
+    const [route, setRoute] = useState<GeoJsonObject | null>(null);
 
     const handleGetDirections = (destCoords: [number, number]) => {
         if (!navigator.geolocation) {

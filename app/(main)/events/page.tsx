@@ -22,7 +22,7 @@ export default function EventsPage() {
           <div className="py-6 flex flex-col md:flex-row justify-between items-start gap-4">
             <div className="mb-2 md:mb-0">
               <p className="text-lg font-semibold text-green-700">Pamitinan Festival</p>
-              <p className="text-gray-600 mt-1">A celebration of the town's founding anniversary and historical roots, featuring street dancing and cultural shows.</p>
+              <p className="text-gray-600 mt-1">A celebration of the town&apos;s founding anniversary and historical roots, featuring street dancing and cultural shows.</p>
             </div>
             <div className="flex-shrink-0 text-left md:text-right">
               <p className="font-bold text-gray-800">August (Annual)</p>

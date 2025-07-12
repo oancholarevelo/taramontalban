@@ -10,7 +10,13 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com', // Example image hosting
+        hostname: 'placehold.co', // Re-added the placeholder domain
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com', // Kept for future use
         port: '',
         pathname: '/**',
       },

@@ -22,24 +22,34 @@ const colorClasses = {
 };
 
 export default function BusinessCard({ name, description, category, imageUrl, color = 'gray', href }: BusinessCardProps) {
+  
+  // The card's inner content, designed to have a consistent height
   const CardContent = () => (
-    <>
-      <Image src={imageUrl} alt={`Image of ${name}`} width={600} height={400} className="w-full h-48 object-cover" />
-      <div className="p-6">
-        <span className={clsx("inline-block text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full mb-2", colorClasses[color])}>
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col h-full">
+      <div className="relative w-full h-48">
+        <Image src={imageUrl} alt={`Image of ${name}`} layout="fill" objectFit="cover" />
+      </div>
+      {/* Added flex-grow and flex container to this div */}
+      <div className="p-6 flex flex-col flex-grow">
+        <span className={clsx("inline-block text-xs font-semibold mr-auto px-2.5 py-0.5 rounded-full mb-2", colorClasses[color])}>
           {category}
         </span>
         <h3 className="text-xl font-bold mb-2 text-gray-900">{name}</h3>
-        <p className="text-gray-600 mb-4 text-sm leading-relaxed">{description}</p>
-        {href && <span className="font-semibold text-green-600 group-hover:underline">View Profile &rarr;</span>}
+        {/* Added flex-grow to the description to push the link down */}
+        <p className="text-gray-600 mb-4 text-sm leading-relaxed flex-grow">{description}</p>
+        {href && (
+          <span className="font-semibold text-green-600 group-hover:underline mt-auto pt-4 self-start">
+            View Profile &rarr;
+          </span>
+        )}
       </div>
-    </>
+    </div>
   );
 
   if (href) {
     return (
-      <Link href={href} className="block group focus:outline-none focus:ring-2 focus:ring-green-500 rounded-lg">
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 group-hover:glow">
+      <Link href={href} className="block group focus:outline-none focus:ring-2 focus:ring-green-500 rounded-lg h-full">
+        <div className="h-full transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
           <CardContent />
         </div>
       </Link>
@@ -47,7 +57,7 @@ export default function BusinessCard({ name, description, category, imageUrl, co
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div className="h-full">
       <CardContent />
     </div>
   );

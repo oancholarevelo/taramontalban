@@ -19,10 +19,23 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <>
-      <div className="bg-white">
-        <Image src={article.imageUrl} alt={`Header for ${article.title}`} width={1200} height={400} className="w-full h-64 md:h-96 object-cover" />
+    <div className="bg-white">
+      {/* New Cover Photo Container */}
+      <div className="w-full bg-white pt-8 pb-4">
+        <div className="max-w-5xl mx-auto px-4">
+            <div className="relative w-full h-96 shadow-lg">
+                <Image 
+                    src={article.imageUrl} 
+                    alt={`Header for ${article.title}`} 
+                    layout="fill" 
+                    objectFit="cover" 
+                    className="rounded-xl"
+                    priority
+                />
+            </div>
+        </div>
       </div>
+
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">{article.title}</h1>
@@ -32,6 +45,6 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
           <ReactMarkdown>{article.content}</ReactMarkdown>
         </article>
       </div>
-    </>
+    </div>
   );
 }
