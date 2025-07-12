@@ -13,10 +13,9 @@ const TrailMap = dynamic(() => import('@/app/components/TrailMap'), {
 
 const trails = Object.values(allTrails);
 
-// Helper function to get a numeric value from difficulty string like "3/9"
 const getDifficultyValue = (difficulty: string): number => {
     const match = difficulty.match(/^(\d+)/);
-    return match ? parseInt(match[1], 10) : 99; // Return a high number if no match
+    return match ? parseInt(match[1], 10) : 99;
 };
 
 export default function TrailsPage() {
@@ -24,14 +23,15 @@ export default function TrailsPage() {
     const [sortBy, setSortBy] = useState('default');
 
     const filteredAndSortedTrails = useMemo(() => {
-        let filtered = trails.filter(trail =>
+        const filtered = trails.filter(trail =>
             trail.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
         if (sortBy === 'easy-to-hard') {
-            filtered.sort((a, b) => getDifficultyValue(a.difficulty) - getDifficultyValue(b.difficulty));
-        } else if (sortBy === 'hard-to-easy') {
-            filtered.sort((a, b) => getDifficultyValue(b.difficulty) - getDifficultyValue(a.difficulty));
+            return filtered.sort((a, b) => getDifficultyValue(a.difficulty) - getDifficultyValue(b.difficulty));
+        }
+        if (sortBy === 'hard-to-easy') {
+            return filtered.sort((a, b) => getDifficultyValue(b.difficulty) - getDifficultyValue(a.difficulty));
         }
 
         return filtered;
@@ -50,7 +50,6 @@ export default function TrailsPage() {
         </Suspense>
       </div>
 
-      {/* Unified Search and Sort Controls */}
       <div className="relative flex items-center w-full mb-8 bg-white border border-gray-300 rounded-lg shadow-sm transition-all duration-300 focus-within:ring-2 focus-within:ring-green-500 focus-within:border-transparent">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <i className="fas fa-search text-gray-400"></i>

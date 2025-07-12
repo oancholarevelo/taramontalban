@@ -4,7 +4,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { businesses, type Business } from '@/app/data/businesses';
+import { businesses } from '@/app/data/businesses';
 import Link from 'next/link';
 
 // Fix for default marker icon issue
@@ -15,12 +15,10 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// Filter out businesses that don't have coordinates
 const businessesWithCoords = businesses.filter(b => b.coords);
 
 export default function DirectoryMap() {
-    // Calculate the center of the map
-    const center: L.LatLngExpression = [14.73, 121.19]; // Centered on Rodriguez, Rizal
+    const center: L.LatLngExpression = [14.73, 121.19];
 
     return (
         <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>

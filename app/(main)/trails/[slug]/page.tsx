@@ -5,7 +5,7 @@ import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L, { LatLngExpression, Map as LeafletMap } from 'leaflet';
+import L, { LatLngExpression, Map as LeafletMapInstance } from 'leaflet';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { GeoJsonObject } from 'geojson';
 
@@ -73,7 +73,7 @@ export default function TrailDetailPage() {
   const [route, setRoute] = useState<GeoJsonObject | null>(null);
   const [userLocation, setUserLocation] = useState<LatLngExpression | null>(null);
   const [statusMessage, setStatusMessage] = useState('');
-  const [itinerary, setItinerary] = useState<string[]>([]);
+  const [itinerary, setItinerary] = useState<(string | { type: string; text: string })[]>([]);
   const [isItineraryButtonDisabled, setIsItineraryButtonDisabled] = useState(false);
   const [dynamicItineraryStatus, setDynamicItineraryStatus] = useState('');
 
@@ -127,6 +127,7 @@ export default function TrailDetailPage() {
   };
 
   const isSignificantManeuver = (step: OSRMStep, index: number, steps: OSRMStep[]) => {
+    if (!step.maneuver || !step.maneuver.type) return false;
     if (index === 0 || index === steps.length - 1) return true;
     const significantTypes = ['turn', 'merge', 'fork', 'roundabout', 'rotary', 'new name'];
     if (significantTypes.includes(step.maneuver.type)) return true;
@@ -151,6 +152,16 @@ export default function TrailDetailPage() {
     return `Turn ${simpleTurn} onto ${street} and continue for ${distance}.`;
   };
 
+  const getIconForStep = (item: string | { type: string; text: string }, index: number) => {
+    if (typeof item !== 'string' && item.type === 'driving') {
+        return 'fa-car';
+    }
+    if (index === itinerary.length - 1) {
+        return 'fa-flag-checkered';
+    }
+    return 'fa-shoe-prints';
+  };
+
   const handleDynamicItinerary = async () => {
     setDynamicItineraryStatus('Getting your location...');
     try {
@@ -164,10 +175,10 @@ export default function TrailDetailPage() {
 
         if (data.routes && data.routes[0].legs[0].steps) {
             const significantSteps = data.routes[0].legs[0].steps.filter(isSignificantManeuver);
-            const drivingSteps = significantSteps.map(formatManeuver);
+            const drivingSteps = significantSteps.map((step: OSRMStep) => ({ type: 'driving', text: formatManeuver(step) }));
+            const hikingSteps = staticItinerary.slice(1);
 
-            const combinedItinerary = [...drivingSteps, ...staticItinerary.slice(1)];
-            setItinerary(combinedItinerary);
+            setItinerary([...drivingSteps, ...hikingSteps]);
             setDynamicItineraryStatus('Minimalist itinerary generated!');
             setIsItineraryButtonDisabled(true);
         } else {
@@ -187,8 +198,9 @@ export default function TrailDetailPage() {
                 <Image 
                     src={trail.imageUrl} 
                     alt={`View from ${trail.name}`} 
-                    layout="fill" 
-                    objectFit="cover" 
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{objectFit: "cover"}}
                     className="rounded-xl"
                     priority
                 />
@@ -215,7 +227,7 @@ export default function TrailDetailPage() {
                     <Popup>Your Location</Popup>
                 </Marker>
               )}
-              {route && <GeoJSON data={route} style={{ color: '#16a34a', weight: 5 }} />}
+              {route && <GeoJSON data={route as GeoJsonObject} style={{ color: '#16a34a', weight: 5 }} />}
             </MapContainer>
           </div>
           <div className="text-center space-y-4 md:space-y-0 md:space-x-4">
@@ -253,10 +265,10 @@ export default function TrailDetailPage() {
               {itinerary.map((item, index) => (
                 <div key={index} className="timeline-item" style={{ animationDelay: `${index * 150}ms` }}>
                   <div className="timeline-dot">
-                     <i className="fas fa-route"></i>
+                     <i className={`fas ${getIconForStep(item, index)}`}></i>
                   </div>
                   <div className="timeline-content">
-                    <p>{item}</p>
+                    <p>{typeof item === 'string' ? item : item.text}</p>
                   </div>
                 </div>
               ))}

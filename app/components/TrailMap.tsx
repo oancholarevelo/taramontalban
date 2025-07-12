@@ -9,7 +9,7 @@ import { allTrails as trailsData } from '@/app/data/trails';
 import Link from 'next/link';
 import { GeoJsonObject } from 'geojson';
 
-// Fix for default marker icon issue with webpack
+// Fix for default marker icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -18,7 +18,6 @@ L.Icon.Default.mergeOptions({
 });
 
 
-// Define Trail type based on data structure
 type Trail = {
   name: string;
   slug: string;
@@ -58,7 +57,7 @@ export default function TrailMap() {
     };
 
     return (
-        <MapContainer center={[14.76, 121.19]} zoom={12} style={{ height: '100%', width: '100%', zIndex: 10 }}>
+        <MapContainer center={[14.76, 121.19]} zoom={12} style={{ height: '100%', width: '100%' }}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -77,7 +76,7 @@ export default function TrailMap() {
                     </Popup>
                 </Marker>
             ))}
-            {route && <GeoJSON data={route} style={{ color: '#16a34a', weight: 5 }} />}
+            {route && <GeoJSON data={route as GeoJsonObject} style={{ color: '#16a34a', weight: 5 }} />}
         </MapContainer>
     );
 }
