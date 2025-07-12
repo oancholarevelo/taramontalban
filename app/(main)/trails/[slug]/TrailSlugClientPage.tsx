@@ -216,7 +216,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
                 if (findLocationFor === 'itinerary') setDynamicItineraryStatus(e.message);
                 setFindLocationFor(null);
             });
-        }, [findLocationFor, map]);
+        }, [map]);
         return null;
     }
 
