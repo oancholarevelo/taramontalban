@@ -1,30 +1,48 @@
 // app/components/ArticleCard.tsx
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface Props {
   title: string;
   excerpt: string;
   author: string;
   date: string;
-  imageUrl: string;
   slug: string;
+  // You can add a 'tags' prop to your data/articles.ts to use this feature
+  tags?: string[];
+  imageUrl: string;
 }
 
-export default function ArticleCard({ title, excerpt, author, date, imageUrl, slug }: Props) {
+export default function ArticleCard({ title, excerpt, author, date, slug, tags = [] }: Props) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:glow">
-      <Link href={`/articles/${slug}`}>
-        <Image src={imageUrl} alt={`Image for article: ${title}`} width={600} height={400} className="w-full h-56 object-cover" />
-      </Link>
-      <div className="p-6">
-        <p className="text-sm text-gray-500 mb-2">By {author} • {date}</p>
-        <h3 className="text-2xl font-bold mb-3 text-gray-900">
-          <Link href={`/articles/${slug}`} className="hover:text-green-700 transition-colors">{title}</Link>
-        </h3>
-        <p className="text-gray-600 mb-4">{excerpt}</p>
-        <Link href={`/articles/${slug}`} className="font-semibold text-green-600 hover:underline">Read More &rarr;</Link>
+    <Link
+      href={`/articles/${slug}`}
+      className="block group bg-white rounded-lg border border-gray-200 p-6 flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-green-500"
+    >
+      {/* Tags Section */}
+      {tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {tags.map(tag => (
+              <span key={tag} className="inline-block bg-gray-100 text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                {tag}
+              </span>
+            ))}
+          </div>
+      )}
+
+      {/* Title */}
+      <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-green-600 transition-colors">
+        {title}
+      </h3>
+
+      {/* Excerpt */}
+      <p className="text-gray-600 mb-4 text-sm leading-relaxed flex-grow">
+        {excerpt}
+      </p>
+
+      {/* Author and Date Footer */}
+      <div className="mt-auto pt-4 border-t border-gray-100">
+        <p className="text-xs text-gray-500">By {author} • {date}</p>
       </div>
-    </div>
+    </Link>
   );
 }

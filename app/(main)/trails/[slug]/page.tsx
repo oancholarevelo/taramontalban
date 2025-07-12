@@ -1,6 +1,7 @@
 // app/(main)/trails/[slug]/page.tsx
 "use client";
 
+import type { Metadata } from 'next';
 import { allTrails } from '@/app/data/trails';
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
@@ -10,7 +11,29 @@ import L, { LatLngExpression } from 'leaflet';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { GeoJsonObject } from 'geojson';
 
-// Define the structure for OSRM step-by-step directions
+// --- SEO: DYNAMIC METADATA GENERATION ---
+type Props = {
+  params: { slug: string }
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const slug = params.slug;
+  const trail = allTrails[slug];
+
+  if (!trail) {
+    return {
+      title: "Trail Not Found",
+      description: "This trail could not be found in our guide to Montalban, Rizal.",
+    }
+  }
+
+  return {
+    title: `${trail.name} | Hiking Trail in Montalban, Rizal`,
+    description: `Explore ${trail.name}, a popular hiking spot and tourist attraction in Montalban. Get details on the trail, difficulty (${trail.difficulty}), MASL (${trail.masl}), and how to get there.`,
+  }
+}
+
+// --- INTERFACES AND TYPE DEFINITIONS ---
 interface OSRMStep {
     maneuver: {
         type: string;
@@ -22,7 +45,6 @@ interface OSRMStep {
     duration: number;
 }
 
-// Fix for default marker icon issue
 interface IconOptions {
   _getIconUrl?: string;
   iconRetinaUrl: string;
@@ -30,6 +52,7 @@ interface IconOptions {
   shadowUrl: string;
 }
 
+// --- LEAFLET ICON FIXES AND CUSTOM ICONS ---
 delete ((L.Icon.Default.prototype as unknown) as IconOptions)._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -38,7 +61,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// Custom Trail Icon
 const trailIcon = new L.Icon({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
     iconSize: [25, 41],
@@ -48,9 +70,8 @@ const trailIcon = new L.Icon({
     shadowSize: [41, 41]
 });
 
-// Custom User Location Icon
 const userIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', // Using green marker
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -58,7 +79,7 @@ const userIcon = new L.Icon({
     shadowSize: [41, 41],
 });
 
-// Map Controller Component
+// --- MAP CONTROLLER COMPONENT ---
 function MapController({ route, userLocation, trailCoords }: { route: GeoJsonObject | null, userLocation: LatLngExpression | null, trailCoords: LatLngExpression }) {
     const map = useMap();
     useEffect(() => {
@@ -73,6 +94,7 @@ function MapController({ route, userLocation, trailCoords }: { route: GeoJsonObj
     return null;
 }
 
+// --- MAIN PAGE COMPONENT ---
 export default function TrailDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
@@ -98,6 +120,7 @@ export default function TrailDetailPage() {
     notFound();
   }
 
+  // --- LOCATION AND ROUTING FUNCTIONS ---
   const findUserLocation = useCallback(() => {
     return new Promise<L.LatLng>((resolve, reject) => {
         if (mapRef.current) {
@@ -135,6 +158,7 @@ export default function TrailDetailPage() {
     }
   };
 
+  // --- ITINERARY FUNCTIONS ---
   const isSignificantManeuver = (step: OSRMStep, index: number, steps: OSRMStep[]) => {
     if (!step.maneuver || !step.maneuver.type) return false;
     if (index === 0 || index === steps.length - 1) return true;
@@ -199,8 +223,34 @@ export default function TrailDetailPage() {
     }
   };
 
+  // --- SEO: STRUCTURED DATA (JSON-LD) ---
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'TouristAttraction',
+    name: trail.name,
+    description: trail.description,
+    image: trail.imageUrl,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Rodriguez',
+      addressRegion: 'Rizal',
+      addressCountry: 'PH'
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: trail.coords[0],
+      longitude: trail.coords[1]
+    }
+  };
+
   return (
     <div className="bg-white">
+      {/* Add JSON-LD Script to the page */}
+      <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      
       <div className="w-full bg-white pt-8 pb-4">
         <div className="max-w-5xl mx-auto px-4">
             <div className="relative w-full h-96 shadow-lg">
@@ -244,7 +294,7 @@ export default function TrailDetailPage() {
               <i className="fas fa-map-signs"></i>
               Get Directions
             </button>
-            <a href={`https://www.google.com/maps/dir/?api=1&destination=${trail.coords[0]},${trail.coords[1]}`} target="_blank" rel="noopener noreferrer" className="bg-yellow-500 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-yellow-600 transition-transform duration-300 transform hover:scale-105 inline-flex items-center gap-2">
+            <a href={`https://www.google.com/maps/dir/?api=1&destination=${trail.coords[0]},${trail.coords[1]}`} target="_blank" rel="noopener noreferrer" className="bg-blue-500 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-blue-600 transition-transform duration-300 transform hover:scale-105 inline-flex items-center gap-2">
                 <i className="fab fa-google"></i>
                 Open in Google Maps
             </a>
@@ -282,7 +332,7 @@ export default function TrailDetailPage() {
                 </div>
               ))}
             </div>
-            <button onClick={handleDynamicItinerary} disabled={isItineraryButtonDisabled} className="mt-8 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+            <button onClick={handleDynamicItinerary} disabled={isItineraryButtonDisabled} className="mt-8 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
               Generate My Personal Itinerary
             </button>
             <p className="text-xs text-gray-500 mt-2 h-4">{dynamicItineraryStatus}</p>

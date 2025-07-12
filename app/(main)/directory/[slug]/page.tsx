@@ -1,3 +1,4 @@
+// app/(main)/directory/[slug]/page.tsx
 import { businesses } from '@/app/data/businesses';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -14,12 +15,35 @@ type PageProps = {
 };
 
 export default async function BusinessDetailPage({ params }: PageProps) {
-  const { slug } = await params; // Await the params Promise to get the slug
+  const { slug } = await params;
   const business = businesses.find(b => b.slug === slug);
 
   if (!business) {
     notFound();
   }
+  
+  // Structured Data (JSON-LD) for SEO
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    // Choose schema type based on category
+    '@type': business.category === 'Resort' ? 'Resort' : 'LocalBusiness',
+    name: business.name,
+    description: business.description,
+    image: business.imageUrl,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: business.address,
+      addressLocality: 'Rodriguez',
+      addressRegion: 'Rizal',
+      addressCountry: 'PH'
+    },
+    geo: {
+        '@type': 'GeoCoordinates',
+        latitude: business.coords ? business.coords[0] : null,
+        longitude: business.coords ? business.coords[1] : null
+    },
+    telephone: business.phone || null
+  };
 
   const colorMap: { [key: string]: string } = {
     green: '#10B981',
@@ -28,13 +52,19 @@ export default async function BusinessDetailPage({ params }: PageProps) {
     gray: '#6B7280',
     orange: '#F97316',
     yellow: '#F59E0B',
-    grey: '#6B7280', // Handle 'grey' alias
+    grey: '#6B7280',
   };
 
   const backgroundColor = colorMap[business.color] || '#6B7280';
 
   return (
     <div className="bg-white">
+      {/* Add JSON-LD Script */}
+       <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden mb-8 shadow-lg">
           <Image
