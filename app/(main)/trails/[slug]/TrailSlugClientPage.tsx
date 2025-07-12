@@ -178,7 +178,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         const hikingSteps = staticItinerary.slice(1);
 
         setItinerary([...drivingSteps, ...hikingSteps]);
-        setDynamicItineraryStatus('Minimalist itinerary generated!');
+        setDynamicItineraryStatus('Personalized itinerary generated!');
         setIsItineraryButtonDisabled(true);
       } else {
         setDynamicItineraryStatus('Could not fetch driving directions.');
