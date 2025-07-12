@@ -8,6 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { GeoJsonObject } from 'geojson';
 import type { Trail } from '@/app/data/trails';
+import { useMap } from 'react-leaflet';
 
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
@@ -24,34 +25,19 @@ interface OSRMStep {
 }
 
 // --- MAP CONTROLLER COMPONENT ---
-const MapController = ({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) => {
-  const [useMap, setUseMap] = useState<any>(null);
-
+function MapController({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) {
+  const map = useMap();
   useEffect(() => {
-    import('react-leaflet').then(leaflet => {
-      setUseMap(() => leaflet.useMap);
-    });
-  }, []);
-
-  if (!useMap) return null;
-
-  const MapComponent = () => {
-    const map = useMap();
-    useEffect(() => {
-      if (route && userLocation) {
-        const geoJsonLayer = L.geoJSON(route);
-        const bounds = geoJsonLayer.getBounds().extend(userLocation as L.LatLngTuple);
-        map.fitBounds(bounds, { padding: [50, 50] });
-      } else {
-        map.setView(trailCoords, 14);
-      }
-    }, [route, userLocation, map, trailCoords]);
-    return null;
-  }
-
-  return <MapComponent />;
+    if (route && userLocation) {
+      const geoJsonLayer = L.geoJSON(route);
+      const bounds = geoJsonLayer.getBounds().extend(userLocation as L.LatLngTuple);
+      map.fitBounds(bounds, { padding: [50, 50] });
+    } else {
+      map.setView(trailCoords, 14);
+    }
+  }, [route, userLocation, map, trailCoords]);
+  return null;
 }
-
 
 // --- MAIN CLIENT PAGE COMPONENT ---
 export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
@@ -192,7 +178,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         const hikingSteps = staticItinerary.slice(1);
 
         setItinerary([...drivingSteps, ...hikingSteps]);
-        setDynamicItineraryStatus('Minimalist itinerary generated!');
+        setDynamicItineraryStatus('Personalized itinerary generated!');
         setIsItineraryButtonDisabled(true);
       } else {
         setDynamicItineraryStatus('Could not fetch driving directions.');
@@ -266,7 +252,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
               Get Directions
             </button>
             <a
-              href={`https://maps.google.com/?q=${trail.coords[0]},${trail.coords[1]}`}
+              href={`http://maps.google.com/maps?q=${trail.coords[0]},${trail.coords[1]}`}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-blue-500 text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-blue-600 transition-transform duration-300 transform hover:scale-105 inline-flex items-center gap-2"
