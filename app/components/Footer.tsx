@@ -17,7 +17,7 @@ export default function Footer() {
             href="/contribute"
             className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-green-600 bg-white hover:bg-green-50 sm:w-auto"
           >
-            Contact Us
+            Contribute Now
           </Link>
         </div>
       </div>
