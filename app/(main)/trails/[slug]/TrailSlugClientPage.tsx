@@ -2,7 +2,7 @@
 "use client";
 
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 import type L from 'leaflet';
 import type { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -20,7 +20,7 @@ interface OSRMStep {
 
 // --- MAIN CLIENT PAGE COMPONENT ---
 export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
-    const mapRef = useRef<any>(null);
+    const mapRef = useRef<L.Map | null>(null);
     const [route, setRoute] = useState<GeoJsonObject | null>(null);
     const [userLocation, setUserLocation] = useState<LatLngExpression | null>(null);
     const [statusMessage, setStatusMessage] = useState('');
@@ -29,8 +29,14 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
     const [dynamicItineraryStatus, setDynamicItineraryStatus] = useState('');
     const [isClient, setIsClient] = useState(false);
     const [leaflet, setLeaflet] = useState<typeof import('leaflet') | null>(null);
-    const [icons, setIcons] = useState<{ trailIcon: any; userIcon: any } | null>(null);
-    const [MapComponents, setMapComponents] = useState<any>(null);
+    const [icons, setIcons] = useState<{ trailIcon: L.Icon; userIcon: L.Icon } | null>(null);
+    const [MapComponents, setMapComponents] = useState<{
+        MapContainer: React.ComponentType<any>;
+        TileLayer: React.ComponentType<any>;
+        Marker: React.ComponentType<any>;
+        Popup: React.ComponentType<any>;
+        GeoJSON: React.ComponentType<any>;
+    } | null>(null);
 
     useEffect(() => {
         setIsClient(true);
@@ -86,32 +92,35 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
 
     // --- MAP CONTROLLER COMPONENT ---
     // MapController must only be defined on client
-    const MapController = isClient && leaflet && MapComponents ? ({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) => {
-        const { useMap } = require('react-leaflet');
-        const map = useMap();
+    // MapController must be a standard React component (not conditional)
+    function MapController({ route, userLocation, trailCoords }: { route: GeoJsonObject | null; userLocation: LatLngExpression | null; trailCoords: LatLngExpression }) {
+        // Only run on client and when leaflet is loaded
+        const { useMap } = MapComponents ? require('react-leaflet') : { useMap: () => null };
+        const map = useMap && useMap();
         useEffect(() => {
+            if (!leaflet || !map) return;
             if (route && userLocation) {
                 const geoJsonLayer = leaflet.geoJSON(route);
-                const bounds = geoJsonLayer.getBounds().extend(userLocation as any);
+                const bounds = geoJsonLayer.getBounds().extend(userLocation as L.LatLngTuple);
                 map.fitBounds(bounds, { padding: [50, 50] });
             } else {
                 map.setView(trailCoords, 14);
             }
-        }, [route, userLocation, map, trailCoords]);
+        }, [route, userLocation, map, trailCoords, leaflet]);
         return null;
-    } : () => null;
+    }
 
     const staticItinerary = trail.itinerary;
 
     // ...existing code...
 
     const findUserLocation = useCallback(() => {
-        return new Promise<any>((resolve, reject) => {
+        return new Promise<L.LatLng>((resolve, reject) => {
             if (mapRef.current && leaflet) {
-                mapRef.current.locate().on('locationfound', (e: any) => {
+                mapRef.current.locate().on('locationfound', (e: { latlng: L.LatLng }) => {
                     setUserLocation(e.latlng);
                     resolve(e.latlng);
-                }).on('locationerror', (e: any) => {
+                }).on('locationerror', (e: { message: string }) => {
                     reject(e.message);
                 });
             } else {
