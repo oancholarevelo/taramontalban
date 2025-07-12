@@ -227,9 +227,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         return null;
     }
 
-    const googleMapsUrl = userLocation
-        ? `https://www.google.com/maps/dir/?api=1&origin=${(userLocation as L.LatLng).lat},${(userLocation as L.LatLng).lng}&destination=${trail.coords[0]},${trail.coords[1]}`
-        : `https://www.google.com/maps/search/?api=1&query=${trail.coords[0]},${trail.coords[1]}`;
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${trail.coords[0]},${trail.coords[1]}`;
 
 
     // Don't render the map until the icons are ready
