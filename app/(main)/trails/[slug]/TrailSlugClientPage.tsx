@@ -13,7 +13,7 @@ import type {
     GeoJSONProps
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { GeoJsonObject } from 'geojson';
 import type { Trail } from '@/app/data/trails';
 
@@ -111,7 +111,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
             } else {
                 map.setView(trailCoords, 14);
             }
-        }, [route, userLocation, map, trailCoords, leaflet]);
+        }, [route, userLocation, map, trailCoords]);
         if (!leaflet || !MapComponents) return null;
         return null;
     }
@@ -177,7 +177,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
         const map = useMap();
         useEffect(() => {
             if (!findLocationFor) return;
-            if (!map || !leaflet) return;
+            if (!map) return;
             map.locate().on('locationfound', async (e: { latlng: L.LatLng }) => {
                 setUserLocation(e.latlng);
                 if (findLocationFor === 'directions') {
@@ -193,7 +193,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
                         } else {
                             setStatusMessage('No route found.');
                         }
-                    } catch (error) {
+                    } catch {
                         setStatusMessage('Could not get directions.');
                     }
                 } else if (findLocationFor === 'itinerary') {
@@ -213,7 +213,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
                         } else {
                             setDynamicItineraryStatus('Could not fetch driving directions.');
                         }
-                    } catch (error) {
+                    } catch {
                         setDynamicItineraryStatus('Could not update itinerary.');
                     }
                 }
@@ -223,7 +223,7 @@ export default function TrailSlugClientPage({ trail }: { trail: Trail }) {
                 if (findLocationFor === 'itinerary') setDynamicItineraryStatus(e.message);
                 setFindLocationFor(null);
             });
-        }, [findLocationFor, leaflet]);
+        }, [findLocationFor, map]);
         return null;
     }
 
