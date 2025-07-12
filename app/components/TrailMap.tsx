@@ -4,7 +4,7 @@
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { allTrails as trailsData } from '@/app/data/trails';
 import Link from 'next/link';
 import { GeoJsonObject } from 'geojson';
@@ -17,14 +17,6 @@ interface IconOptions {
   shadowUrl: string;
 }
 
-delete ((L.Icon.Default.prototype as unknown) as IconOptions)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-});
-
-
 type Trail = {
   name: string;
   slug: string;
@@ -32,11 +24,21 @@ type Trail = {
 };
 const allTrails: Trail[] = Object.values(trailsData);
 
-
 export default function TrailMap() {
     const [route, setRoute] = useState<GeoJsonObject | null>(null);
 
+    // This useEffect hook ensures the code runs only on the client
+    useEffect(() => {
+        delete ((L.Icon.Default.prototype as unknown) as IconOptions)._getIconUrl;
+        L.Icon.Default.mergeOptions({
+            iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        });
+    }, []);
+
     const handleGetDirections = (destCoords: [number, number]) => {
+        // ... (function remains the same)
         if (!navigator.geolocation) {
             alert('Geolocation is not supported by your browser.');
             return;
