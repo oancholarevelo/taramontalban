@@ -5,7 +5,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Rodriguez Tourism Portal',
+  title: 'Tara Montalban | Homepage',
   description: 'Your ultimate guide to the adventure capital of the Philippines.',
 };
 
